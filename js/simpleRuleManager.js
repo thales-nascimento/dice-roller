@@ -1,4 +1,4 @@
-import { makeFlexRow, makeButton, makeLabel, makeOption } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, makeOption, flash, warmup } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 import { operators } from "./condition.js"
 
@@ -6,7 +6,6 @@ const constantText = "const";
 
 export default class SimpleRuleManager {
   constructor(topLevelEl, creatorEl, variableManager) {
-    this.ruleIndex = 0;
     this.rules = {};
 
     this.topLevelEl = topLevelEl;
@@ -23,20 +22,20 @@ export default class SimpleRuleManager {
     this.prepareAdderButton();
   }
 
-  generateRow(operandA, operator, operandB) {
+  generateRow(name, operandA, operator, operandB) {
     const rule = {
-      name: `${operandA.key} ${operator.text} `,
-      key: this.nextKey(),
+      key: "%" + name,
+      tooltip: `${operandA.key} ${operator.text} `,
+      manager: this,
       depends: new Set(),
       requiredBy: new Set(),
-      manager: this,
     };
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);
 
     const keyEl = makeLabel({text: rule.key, classes: ["simple-rule-key"]});
     const operandALabelEl = makeLabel({text: operandA.key, classes: ["variable-key"]});
-    const operatorLabelEl = makeLabel({text: operator.text, classes: ["menu-label", "operator"]});
+    const operatorLabelEl = makeLabel({text: operator.text, classes: ["operator"]});
     let operandBLabelEl;
     if (Number.parseFloat(operandB)) {
       rule.name += operandB.toString();
@@ -71,21 +70,41 @@ export default class SimpleRuleManager {
     delete this.rules[rule.key];
   }
 
-  nextKey() {
-    this.ruleIndex += 1;
-    return `%${this.ruleIndex}`
-  }
-
   prepareAdderButton() {
+    const nameEl = this.creatorEl.querySelector("#new-simple-rule-name");
     const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-rule-operator-selector");
     const operatorOptionEls = Object.values(operators).map(op => makeOption({text: op.text, value: op.text}));
+
     for (const opEl of operatorOptionEls) {
       operatorSelectionEl.appendChild(opEl);
     }
+
+    const removeInputError = (evt) => evt.target.classList.remove("input-error");
+    nameEl.addEventListener("input", removeInputError);
+    this.operandASelectionEl.addEventListener("change", removeInputError);
+
     this.refreshVariables();
+
     const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
     addNewButtonEl.addEventListener("click", () => {
-      const operandA = this.variableManager.getVariableByKey(this.operandASelectionEl.value);
+      const name = nameEl.value;
+      if (name === "") {
+        nameEl.classList.add("input-error");
+        return;
+      }
+      if (this.rules[name] !== undefined) {
+        nameEl.classList.add("input-error");
+        flash(this.rules[name].el);
+        return;
+      }
+
+      const operandAKey = this.operandASelectionEl.value;
+      if (operandAKey === "") {
+        this.operandASelectionEl.classList.add("input-error");
+        return;
+      }
+
+      const operandA = this.variableManager.getVariableByKey(operandAKey);
       const operator = operators[operatorSelectionEl.value];
       let operandB;
       if (this.operandBSelectionEl.value !== constantText) {
@@ -93,7 +112,7 @@ export default class SimpleRuleManager {
       } else {
         operandB = this.constantInputEl.value;
       }
-      this.generateRow(operandA, operator, operandB);
+      this.generateRow(name, operandA, operator, operandB);
     });
   }
 
@@ -115,6 +134,7 @@ export default class SimpleRuleManager {
     this.operandBSelectionEl.addEventListener("change", (evt) => {
       this.constantInputEl.disabled = evt.target.value !== constantText;
     });
+    warmup("change", this.operandBSelectionEl);
   }
 
   refreshOperandA(variableOptionEls) {
@@ -122,6 +142,7 @@ export default class SimpleRuleManager {
     for (const variableEl of variableOptionEls) {
       this.operandASelectionEl.appendChild(variableEl);
     }
+    warmup("change", this.operandASelectionEl);
   }
 }
 

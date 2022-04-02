@@ -90,3 +90,8 @@ export function flash(el) {
   el.classList.add("flash");
   el.addEventListener("animationend", removeFlashClass);
 }
+
+export function warmup(evtName, el) {
+  const event = new Event(evtName);
+  el.dispatchEvent(event);
+}

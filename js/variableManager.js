@@ -16,7 +16,7 @@ export default class VariableManager {
 
   generateRow(name) {
     const variable = {
-      key: name,
+      key: "$" + name,
       requiredBy: new Set(),
     };
 
@@ -69,17 +69,19 @@ export default class VariableManager {
   prepareAdderButton() {
     const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
     const nameEl = this.creatorEl.querySelector("#new-variable-name");
-    nameEl.addEventListener("change", () => {
+
+    nameEl.addEventListener("input", () => {
       nameEl.classList.remove("input-error");
     });
+
     addNewButtonEl.addEventListener("click", () => {
       const name = nameEl.value;
       if (name !== "") {
-        if (this.variables[name] !== undefined) {
+        if (this.variables[name] === undefined) {
+          this.generateRow(nameEl.value);
+        } else {
           nameEl.classList.add("input-error");
           flash(this.variables[name].el);
-        } else {
-          this.generateRow(nameEl.value);
         }
       } else {
         nameEl.classList.add("input-error");

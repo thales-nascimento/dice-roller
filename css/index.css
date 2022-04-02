@@ -21,7 +21,7 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
-.dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
+.operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
   line-height: 24px;
@@ -60,7 +60,7 @@ body > fieldset:first-child {
 .simple-rule-key {
   padding: 0 3px;
   background-color: darkorange;
-  width: 2em;
+  width: 10em;
 }
 .menu-remove-button {
   background-color: crimson;
@@ -76,6 +76,11 @@ body > fieldset:first-child {
 }
 .menu-adder-button {
   margin-top: 4px;
+}
+
+.input-error {
+  color: darkred;
+  border-color: darkred;
 }
 
 .flash {

@@ -1,4 +1,4 @@
-import { makeFlexRow, makeButton, makeLabel, makeNumberInput, flash } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, makeNumberInput, flash, warmup } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
 export default class DiceManager {
@@ -96,10 +96,7 @@ export default class DiceManager {
         this.faceWeightsEl.appendChild(faceEl);
       }
     });
-
-    //warmup
-    const event = new Event("change");
-    this.facesEl.dispatchEvent(event);  // warmup
+    warmup("change", this.facesEl);
 
     this.preparePresets();
   }

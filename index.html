@@ -33,8 +33,8 @@
         <fieldset id="new-dice" class="flex-col">
           <legend>Create new dice</legend>
           <div class="flex-row">
-            <label for="faces">Face count:</label>
-            <input name="faces" id="new-dice-faces" type="number" min="2" max="100" value="2" step="1"></input>
+            <label for="new-dice-faces">Face count:</label>
+            <input id="new-dice-faces" type="number" min="2" max="100" value="2" step="1"></input>
           </div>
           <div class="flex-row">
             <label>Presets: </label>
@@ -56,8 +56,8 @@
       <div class="flex-col">
         <fieldset id="new-variable" class="flex-row">
           <legend>Create new variable</legend>
-          <label for="variable-name">Name</label>
-          <input name="variable-name" id="new-variable-name" type="text" maxlength="20"></input>
+          <label for="new-variable-name">Name:</label>
+          <input id="new-variable-name" type="text" maxlength="20"></input>
           <button id="new-variable-create">Create</button>
         </div>
       </div>
@@ -65,6 +65,8 @@
       <div class="flex-col">
         <fieldset id="new-simple-rule" class="flex-row">
           <legend>Create new simple rule</legend>
+          <label for="new-simple-rule-name">Name:</label>
+          <input id="new-simple-rule-name" type="text" maxlength="20"></input>
           <select id="new-simple-rule-operand-a-selector"></select>
           <select id="new-simple-rule-operator-selector"></select>
           <select id="new-simple-rule-operand-b-selector"></select>
