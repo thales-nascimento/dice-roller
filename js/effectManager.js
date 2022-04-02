@@ -1,11 +1,10 @@
 import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
+import Manager from "./manager.js";
 
-export default class EffectManager {
+export default class EffectManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    this.effects = {};
-    this.changeListeners = [];
-
+    super();
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
@@ -31,7 +30,7 @@ export default class EffectManager {
       openConfirmator(x, y, `Delete effect ${effect.key} ?`, () => this.removeEffect(effect));
     });
 
-    this.effects[effect.key] = effect;
+    this.managed[effect.key] = effect;
     this.menuEl.appendChild(effect.el );
     this.onChange();
   }
@@ -43,26 +42,8 @@ export default class EffectManager {
       }
     } else {
       this.menuEl.removeChild(variable.el);
-      delete this.effects[variable.key];
+      delete this.managed[variable.key];
       this.onChange();
-    }
-  }
-
-  getEffects() {
-    return Object.values(this.effects);
-  }
-
-  getEffectByKey(key) {
-    return this.effects[key];
-  }
-
-  addChangeListener(callback) {
-    this.changeListeners.push(callback);
-  }
-
-  onChange() {
-    for (const cb of this.changeListeners) {
-      cb();
     }
   }
 
@@ -81,9 +62,9 @@ export default class EffectManager {
       }
 
       name = "eff-" + name;
-      if (this.effects[name] !== undefined) {
+      if (this.managed[name] !== undefined) {
         nameEl.classList.add("input-error");
-        flash(this.effects[name].el);
+        flash(this.managed[name].el);
         return;
       }
 

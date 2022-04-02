@@ -1,14 +1,13 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption, flash, warmup } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 import { operators } from "./condition.js"
+import Manager from "./manager.js";
 
 const constantText = "const";
 
-export default class SimpleRuleManager {
+export default class SimpleRuleManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
-    this.rules = {};
-    this.changeListeners = [];
-
+    super();
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
@@ -55,7 +54,7 @@ export default class SimpleRuleManager {
       openConfirmator(x, y, `Delete rule ${rule.key} ?`, () => this.removeRule(rule));
     });
 
-    this.rules[rule.key] = rule;
+    this.managed[rule.key] = rule;
     this.menuEl.appendChild(rule.el);
     this.onChange();
   }
@@ -70,7 +69,7 @@ export default class SimpleRuleManager {
         dep.requiredBy.delete(rule);
       }
       this.menuEl.removeChild(rule.el);
-      delete this.rules[rule.key];
+      delete this.managed[rule.key];
       this.onChange();
     }
   }
@@ -96,9 +95,9 @@ export default class SimpleRuleManager {
       }
 
       name = "cause-" + name;
-      if (this.rules[name] !== undefined) {
+      if (this.managed[name] !== undefined) {
         nameEl.classList.add("input-error");
-        flash(this.rules[name].el);
+        flash(this.managed[name].el);
         return;
       }
 
@@ -108,12 +107,12 @@ export default class SimpleRuleManager {
         return;
       }
 
-      const operandA = this.diceManager.getDiceByKey(operandAKey) || this.variableManager.getVariableByKey(operandAKey);
+      const operandA = this.diceManager.getManagedByKey(operandAKey) || this.variableManager.getManagedByKey(operandAKey);
       const operator = operators[operatorSelectionEl.value];
       let operandB;
       if (this.operandBSelectionEl.value !== constantText) {
         const operandBKey = this.operandBSelectionEl.value;
-        operandB = this.diceManager.getDiceByKey(operandBKey) || this.variableManager.getVariableByKey(operandBKey);
+        operandB = this.diceManager.getManagedByKey(operandBKey) || this.variableManager.getManagedByKey(operandBKey);
       } else {
         //TODO(thales) check if constant makes sense against dice
         operandB = this.constantInputEl.value;
@@ -123,8 +122,8 @@ export default class SimpleRuleManager {
   }
 
   refreshVariables() {
-    const variables = this.variableManager.getVariables();
-    const dices = this.diceManager.getDices();
+    const variables = this.variableManager.getAllManaged();
+    const dices = this.diceManager.getAllManaged();
     const optionEls = variables.concat(dices).map(v => makeOption({text: v.key, value: v.key}));
 
     this.refreshOperandA(optionEls);
@@ -150,24 +149,6 @@ export default class SimpleRuleManager {
       this.operandASelectionEl.appendChild(variableEl);
     }
     warmup("change", this.operandASelectionEl);
-  }
-
-  getRules() {
-    return Object.values(this.rules);
-  }
-
-  getRuleByKey(key) {
-    return this.rules[key];
-  }
-
-  addChangeListener(callback) {
-    this.changeListeners.push(callback);
-  }
-
-  onChange() {
-    for (const cb of this.changeListeners) {
-      cb();
-    }
   }
 }
 

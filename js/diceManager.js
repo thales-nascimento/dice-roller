@@ -1,11 +1,11 @@
 import { makeFlexRow, makeButton, makeLabel, makeNumberInput, flash, warmup } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
+import Manager from "./manager.js";
 
-export default class DiceManager {
+export default class DiceManager extends Manager {
   constructor(topLevelEl, creatorEl) {
+    super();
     this.diceIndex = 0;
-    this.dices = {};
-    this.changeListeners = [];
 
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
@@ -53,7 +53,7 @@ export default class DiceManager {
       openConfirmator(x, y, `Delete dice ${dice.key}?`, () => this.removeDice(dice));
     });
 
-    this.dices[dice.key] = dice;
+    this.managed[dice.key] = dice;
     this.menuEl.appendChild(dice.el);
     this.onChange();
   }
@@ -65,7 +65,7 @@ export default class DiceManager {
       }
     } else {
       this.menuEl.removeChild(dice.el);
-      delete this.dices[dice.key];
+      delete this.managed[dice.key];
       this.onChange();
     }
   }
@@ -73,14 +73,6 @@ export default class DiceManager {
   nextKey() {
     this.diceIndex += 1;
     return `#${this.diceIndex}`
-  }
-
-  getDices() {
-    return Object.values(this.dices);
-  }
-
-  getDiceByKey(key) {
-    return this.dices[key];
   }
 
   prepareAdderButton() {
@@ -122,16 +114,6 @@ export default class DiceManager {
         const event = new Event("change");
         this.facesEl.dispatchEvent(event);
       });
-    }
-  }
-
-  addChangeListener(callback) {
-    this.changeListeners.push(callback);
-  }
-
-  onChange() {
-    for (const cb of this.changeListeners) {
-      cb();
     }
   }
 }

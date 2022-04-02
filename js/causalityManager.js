@@ -1,11 +1,10 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption, flash, warmup } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
-import effects from "./effects.js"
+import Manager from "./manager.js";
 
-export default class CausalityManager {
+export default class CausalityManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleRuleManager, effectManger) {
-    this.causalities = {};
-
+    super();
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
@@ -25,7 +24,7 @@ export default class CausalityManager {
   generateRow(name, cause, effect) {
     const causality = {
       key: name,
-      tooltip: `if ${cause.key} then ${effect}`,
+      tooltip: `if ${cause.key} then ${effect.key}`,
       cause,
       effect,
       depends: new Set(),
@@ -46,7 +45,7 @@ export default class CausalityManager {
       openConfirmator(x, y, `Delete causality ${causality.key} ?`, () => this.removeCausality(causality));
     });
 
-    this.causalities[causality.key] = causality;
+    this.managed[causality.key] = causality;
     this.menuEl.appendChild(causality.el);
   }
 
@@ -55,15 +54,13 @@ export default class CausalityManager {
       dep.requiredBy.delete(causality);
     }
     this.menuEl.removeChild(causality.el);
-    delete this.causalities[causality.key];
+    delete this.managed[causality.key];
   }
 
   prepareAdderButton() {
     const nameEl = this.creatorEl.querySelector("#new-causality-name");
     const effectSelectionEl = this.creatorEl.querySelector("#new-causality-effect");
     const addNewButtonEl = this.creatorEl.querySelector("#new-causality-create");
-
-    fillEffects(effectSelectionEl);
 
     const removeInputError = (evt) => evt.target.classList.remove("input-error");
     nameEl.addEventListener("input", removeInputError);
@@ -80,9 +77,9 @@ export default class CausalityManager {
       }
 
       name = "cslty-" + name;
-      if (this.causalities[name] !== undefined) {
+      if (this.managed[name] !== undefined) {
         nameEl.classList.add("input-error");
-        flash(this.causalities[name].el);
+        flash(this.managed[name].el);
         return;
       }
 
@@ -92,15 +89,21 @@ export default class CausalityManager {
         return;
       }
 
-      const cause = this.simpleRuleManager.getRuleByKey(causeKey);
-      const effect = effects[effectSelectionEl.value];
+      const effectKey = effectSelectionEl.value;
+      if (effectKey === "") {
+        this.effectSelectionEl.classList.add("input-error");
+        return;
+      }
+
+      const cause = this.simpleRuleManager.getManagedByKey(causeKey);
+      const effect = this.effectManager.getManagedByKey(effectKey);
 
       this.generateRow(name, cause, effect);
     });
   }
 
   refreshCauses() {
-    const causes = this.simpleRuleManager.getRules();
+    const causes = this.simpleRuleManager.getAllManaged();
     const optionEls = causes.map(r => makeOption({text: r.key, value: r.key}));
 
     this.causeSelectionEl.innerHTML = "";
@@ -111,7 +114,7 @@ export default class CausalityManager {
   }
 
   refreshEffects() {
-    const effects = this.effectManager.getEffects();
+    const effects = this.effectManager.getAllManaged();
     const optionEls = effects.map(e => makeOption({text: e.key, value: e.key}));
 
     this.effectionSelectionEl.innerHTML = "";
@@ -120,15 +123,6 @@ export default class CausalityManager {
     }
     warmup("change", this.effectionSelectionEl);
   }
-}
-
-
-function fillEffects(effectSelectionEl) {
-  const effectOptionEls = Object.entries(effects).map(([k, v]) => makeOption({text: v, value: k}));
-  for (const effectEl of effectOptionEls) {
-    effectSelectionEl.appendChild(effectEl);
-  }
-  warmup("change", effectSelectionEl);
 }
 
 /*TODO(thales) não permitir adicionar duplicatas */;

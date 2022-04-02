@@ -1,11 +1,10 @@
 import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
+import Manager from "./manager.js";
 
-export default class VariableManager {
+export default class VariableManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    this.variables = {};
-    this.changeListeners = [];
-
+    super();
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
@@ -31,7 +30,7 @@ export default class VariableManager {
       openConfirmator(x, y, `Delete variable ${variable.key} ?`, () => this.removeVariable(variable));
     });
 
-    this.variables[variable.key] = variable;
+    this.managed[variable.key] = variable;
     this.menuEl.appendChild(variable.el );
     this.onChange();
   }
@@ -43,26 +42,8 @@ export default class VariableManager {
       }
     } else {
       this.menuEl.removeChild(variable.el);
-      delete this.variables[variable.key];
+      delete this.managed[variable.key];
       this.onChange();
-    }
-  }
-
-  getVariables() {
-    return Object.values(this.variables);
-  }
-
-  getVariableByKey(key) {
-    return this.variables[key];
-  }
-
-  addChangeListener(callback) {
-    this.changeListeners.push(callback);
-  }
-
-  onChange() {
-    for (const cb of this.changeListeners) {
-      cb();
     }
   }
 
@@ -81,9 +62,9 @@ export default class VariableManager {
       }
 
       name = "var-" + name;
-      if (this.variables[name] !== undefined) {
+      if (this.managed[name] !== undefined) {
         nameEl.classList.add("input-error");
-        flash(this.variables[name].el);
+        flash(this.managed[name].el);
         return;
       }
 
