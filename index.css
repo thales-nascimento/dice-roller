@@ -21,23 +21,29 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
-.menu-index, .menu-label, .menu-remove-button {
+.index-variable, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
+  line-height: 24px;
   margin: 0 0 2px 0;
   border: 0;
   text-align: center;
   text-overflow: ellipsis;
 }
-.menu-index {
-  padding: 0 4px;
-  background-color: aquamarine;
-  width: 2em;
-}
 .menu-label {
   background-color: olivedrab;
   width: 4em;
   padding: 0 8px;
+}
+.index-variable {
+  padding: 0 3px;
+  background-color: aquamarine;
+  width: 2em;
+}
+.index-basic-rule {
+  padding: 0 3px;
+  background-color: darkorange;
+  width: 2em;
 }
 .menu-remove-button {
   background-color: crimson;
@@ -54,6 +60,7 @@ body > fieldset:first-child {
 .menu-adder-button {
   margin-top: 4px;
 }
+
 
 
 #confirmator {

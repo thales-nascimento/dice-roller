@@ -29,7 +29,7 @@ export default class Variable {
 
   generateMenuRow(i) {
     const preset = presets[i];
-    const indexEl = makeLabel({text: `$${i + 1}`, classes: ["menu-index"]});
+    const indexEl = makeLabel({text: `$${i + 1}`, classes: ["index-variable"]});
     const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     if (!preset.removable) {
