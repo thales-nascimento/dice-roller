@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+  <head>
+    <title>Dicer</title>
+    <meta charset="utf-8" />
+    <link rel='stylesheet' href='index.css'/>
+    <script src="./js/index.js" type="module"></script>
+  </head>
+
+  <body>
+    <div class="flex-col">
+      <div class="flex-row">
+        <fieldset id="dice-top-level" class="flex-row">
+          <legend>Dices</legend>
+          <div id="dice-menu" class="flex-col"></div>
+          <div id="dices" class="flex-col"></div>
+        </fieldset>
+        <fieldset id="rules-top-level" class="flex-row">
+          <legend>Rules</legend>
+        </fieldset>
+      </div>
+    </div>
+
+
+    <div class="modal">
+      <span class="modal-backdrop"></span>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title"></h2>
+          <button class="close-modal">&times</button>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button class="close-modal modal-ok"></button>
+          <button class="close-modal modal-cancel"></button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

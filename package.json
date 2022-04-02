@@ -1,0 +1,16 @@
+{
+  "name": "dicer",
+  "version": "0.0.1",
+  "description": "Flexible dice roller",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server",
+    "lint": "eslint"
+  },
+  "author": "Thales Bacelar",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.12.0",
+    "http-server": "^14.1.0"
+  }
+}
