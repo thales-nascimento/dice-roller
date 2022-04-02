@@ -1,53 +1,34 @@
 import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
-const presets = [
-  {
-    name: "dice",
-    removable: false,
-  },
-  {
-    name: "hunger",
-    removable: true,
-  }
-];
-
 export default class VariableManager {
   constructor(topLevelEl) {
     this.variableIndex = 0;
     this.variables = {};
     this.changeListeners = [];
+
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
     this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
-    this.generatePresets();
   }
 
-  generatePresets() {
-    for (const preset of presets) {
-      this.generateMenuRow(preset);
-    }
-  }
-
-  generateMenuRow(recipe) {
+  generateMenuRow(name) {
     const variable = {
       key: this.nextKey(),
+      name: name,
       requiredBy: new Set(),
     };
 
     const keyEl = makeLabel({text: variable.key, classes: ["variable-key"]});
-    const labelEl = makeLabel({text: recipe.name, classes: ["menu-label"]});
+    const labelEl = makeLabel({text: variable.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
-    if (!recipe.removable) {
-      removeButtonEl.disabled = true;
-    }
     variable.el = makeFlexRow({children: [keyEl, labelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
       const rect = variable.el .getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete variable ${recipe.name} ?`, () => this.removeVariable(variable));
+      openConfirmator(x, y, `Delete variable ${variable.key} ${variable.name} ?`, () => this.removeVariable(variable));
     });
 
     this.variables[variable.key] = variable;
@@ -65,7 +46,7 @@ export default class VariableManager {
     } else {
       this.menuEl.removeChild(variable.el);
       delete this.variables[variable.key];
-      this.onVariableChange();
+      this.onChange();
     }
   }
 
@@ -86,7 +67,7 @@ export default class VariableManager {
     this.changeListeners.push(callback);
   }
 
-  onVariableChange() {
+  onChange() {
     for (const cb of this.changeListeners) {
       cb();
     }

@@ -3,6 +3,10 @@ import openConfirmator from "./confirmator.js";
 
 export default class DiceManager {
   constructor(topLevelEl, diceCreatorEl) {
+    this.diceIndex = 0;
+    this.dices = {};
+    this.changeListeners = [];
+
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
@@ -13,25 +17,55 @@ export default class DiceManager {
     this.prepareAdderButton();
   }
 
-  generateRow(i) {
-    const recipe = presets[i];
-    const labelEl = makeLabel({text: recipe.name, classes: ["menu-label"]});
+  generateRow(weights) {
+    console.assert(Array.isArray(weights));
+    const dice = {
+      key: this.nextKey(),
+      faces: weights.length,
+      name: `d${weights.length}`,
+      balanced: true,
+      totalWeight: 0,
+      requiredBy: new Set(),
+    };
+    for (const w of weights) {
+      dice.balanced &&= w === weights[0];
+      dice.totalWeight += w;
+    }
+    if (dice.balanced) {
+      dice.tooltip = `${dice.faces} faces, fair.`;
+    } else {
+      console.log(dice.totalWeight);
+      dice.tooltip = `${dice.faces} faces, unfair: ${weights.map(w => `${w}/${dice.totalWeight}`).join(' ')}.`;
+    }
+    const keyEl = makeLabel({text: dice.key, tooltip: dice.tooltip, classes: ["dice-key"]});
+    const nameEl = makeLabel({text: dice.name, tooltip: dice.tooltip, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
-    const rowEl = makeFlexRow({children: [labelEl, removeButtonEl]});
+    dice.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
       const rect = removeButtonEl.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete dice ${recipe.name}?`, () => this.removePreset(i, rowEl));
+      openConfirmator(x, y, `Delete dice ${dice.key} ${dice.name}?`, () => this.removeDice(dice));
     });
 
-    this.menuEl.appendChild(rowEl);
+    this.dices[dice.key] = dice;
+    this.menuEl.appendChild(dice.el);
   }
 
-  removePreset(i, el) {
-    presets.splice(i, 1);
-    this.menuEl.removeChild(el);
+  removeDice(dice) {
+    if (dice.requiredBy.size) {
+      for (const dependent of dice.requiredBy) {
+        dependent.el.classList.add("flash");
+        dependent.el.addEventListener("animationend", () => {
+          dependent.el.classList.remove("flash");
+        });
+      }
+    } else {
+      this.menuEl.removeChild(dice.el);
+      delete this.dices[dice.key];
+      this.onChange();
+    }
   }
 
   prepareAdderButton() {
@@ -39,8 +73,18 @@ export default class DiceManager {
 
     const addNewButtonEl = this.diceCreatorEl.querySelector("#new-dice-create");
     addNewButtonEl.addEventListener("click", () => {
-      console.log("add dice");
+      const weights = [];
+      for (const weightEl of this.faceWeightsEl.childNodes) {
+        const value = weightEl.querySelector("input").value;
+        weights.push(parseInt(value));
+      }
+      this.generateRow(weights);
     });
+  }
+
+  nextKey() {
+    this.diceIndex += 1;
+    return `#${this.diceIndex}`
   }
 
   prepareFacesChange() {
@@ -72,16 +116,14 @@ export default class DiceManager {
       });
     }
   }
-}
 
-
-function makeBalancedDice(faces) {
-  const faceWeight = [];
-  for (let i = 0; i < faces; i += 1) {
-    faceWeight.push(1);
+  addChangeListener(callback) {
+    this.changeListeners.push(callback);
   }
-  return {
-    name: `d${faces}`,
-    faceWeight,
-  };
+
+  onChange() {
+    for (const cb of this.changeListeners) {
+      cb();
+    }
+  }
 }

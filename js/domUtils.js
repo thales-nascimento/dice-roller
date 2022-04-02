@@ -33,11 +33,12 @@ export function makeButton({text = "", classes = []}) {
   return buttonEl;
 }
 
-export function makeLabel({text, target, classes = []}) {
+export function makeLabel({text, target, tooltip, classes = []}) {
   console.assert(Array.isArray(classes));
   const labelEl = document.createElement('label');
   labelEl.textContent = text;
   labelEl.for = target;
+  labelEl.title = tooltip;
   for (const c of classes) {
     labelEl.classList.add(c);
   }

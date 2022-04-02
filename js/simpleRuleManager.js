@@ -34,8 +34,8 @@ export default class SimpleRuleManager {
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);
 
-    const keyEl = makeLabel({text: rule.key, classes: ["variable-key", "simple-rule-key"]});
-    const operandALabelEl = makeLabel({text: operandA.key, classes: ["menu-label", "variable-key"]});
+    const keyEl = makeLabel({text: rule.key, classes: ["simple-rule-key"]});
+    const operandALabelEl = makeLabel({text: operandA.key, classes: ["variable-key"]});
     const operatorLabelEl = makeLabel({text: operator.text, classes: ["menu-label", "operator"]});
     let operandBLabelEl;
     if (Number.parseFloat(operandB)) {
