@@ -3,7 +3,7 @@ import openConfirmator from "./confirmator.js";
 import effects from "./effects.js"
 
 export default class CausalityManager {
-  constructor(topLevelEl, creatorEl, simpleRuleManager) {
+  constructor(topLevelEl, creatorEl, simpleRuleManager, effectManger) {
     this.causalities = {};
 
     this.topLevelEl = topLevelEl;
@@ -11,9 +11,13 @@ export default class CausalityManager {
 
     this.creatorEl = creatorEl;
     this.causeSelectionEl = creatorEl.querySelector("#new-causality-cause");
+    this.effectionSelectionEl = creatorEl.querySelector("#new-causality-effect");
 
     this.simpleRuleManager = simpleRuleManager;
     simpleRuleManager.addChangeListener(() => this.refreshCauses());
+
+    this.effectManager = effectManger;
+    effectManger.addChangeListener(() => this.refreshEffects());
 
     this.prepareAdderButton();
   }
@@ -66,6 +70,7 @@ export default class CausalityManager {
     this.causeSelectionEl.addEventListener("change", removeInputError);
 
     this.refreshCauses();
+    this.refreshEffects();
 
     addNewButtonEl.addEventListener("click", () => {
       let name = nameEl.value;
@@ -95,14 +100,25 @@ export default class CausalityManager {
   }
 
   refreshCauses() {
-    const rules = this.simpleRuleManager.getRules();
-    const optionEls = rules.map(r => makeOption({text: r.key, value: r.key}));
+    const causes = this.simpleRuleManager.getRules();
+    const optionEls = causes.map(r => makeOption({text: r.key, value: r.key}));
 
     this.causeSelectionEl.innerHTML = "";
     for (const ruleEl of optionEls) {
       this.causeSelectionEl.appendChild(ruleEl);
     }
     warmup("change", this.causeSelectionEl);
+  }
+
+  refreshEffects() {
+    const effects = this.effectManager.getEffects();
+    const optionEls = effects.map(e => makeOption({text: e.key, value: e.key}));
+
+    this.effectionSelectionEl.innerHTML = "";
+    for (const ruleEl of optionEls) {
+      this.effectionSelectionEl.appendChild(ruleEl);
+    }
+    warmup("change", this.effectionSelectionEl);
   }
 }
 

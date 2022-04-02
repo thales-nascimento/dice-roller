@@ -19,12 +19,16 @@
           <legend>Available variables</legend>
           <div class="menu-list flex-col"></div>
         </fieldset>
-        <fieldset id="simple-rules-top-level" class="flex-col">
-          <legend>Available simple rules</legend>
+        <fieldset id="simple-causes-top-level" class="flex-col">
+          <legend>Available simple causes</legend>
           <div class="menu-list flex-col"></div>
         </fieldset>
-        <fieldset id="complex-rules-top-level" class="flex-col">
-          <legend>Available complex rules</legend>
+        <fieldset id="complex-causes-top-level" class="flex-col">
+          <legend>Available complex causes</legend>
+          <div class="menu-list flex-col"></div>
+        </fieldset>
+        <fieldset id="effects-top-level" class="flex-col">
+          <legend>Available effects</legend>
           <div class="menu-list flex-col"></div>
         </fieldset>
         <fieldset id="conditions-top-level" class="flex-col">
@@ -63,15 +67,22 @@
         <button id="new-variable-create">Create</button>
       </fieldset>
 
-      <fieldset id="new-simple-rule" class="flex-row">
-        <legend>Create new simple rule</legend>
-        <label for="new-simple-rule-name">Name:</label>
-        <input id="new-simple-rule-name" type="text" maxlength="20"></input>
-        <select id="new-simple-rule-operand-a-selector"></select>
-        <select id="new-simple-rule-operator-selector"></select>
-        <select id="new-simple-rule-operand-b-selector"></select>
-        <input id="new-simple-rule-constant" type="number" min="1" value="1" step="1"></input>
-        <button id="new-simple-rule-create">Create</button>
+      <fieldset id="new-simple-cause" class="flex-row">
+        <legend>Create new simple cause</legend>
+        <label for="new-simple-cause-name">Name:</label>
+        <input id="new-simple-cause-name" type="text" maxlength="20"></input>
+        <select id="new-simple-cause-operand-a-selector"></select>
+        <select id="new-simple-cause-operator-selector"></select>
+        <select id="new-simple-cause-operand-b-selector"></select>
+        <input id="new-simple-cause-constant" type="number" min="1" value="1" step="1"></input>
+        <button id="new-simple-cause-create">Create</button>
+      </fieldset>
+
+      <fieldset id="new-effect" class="flex-row">
+        <legend>Create new effect</legend>
+        <label for="new-effect-name">Name:</label>
+        <input id="new-effect-name" type="text" maxlength="20"></input>
+        <button id="new-effect-create">Create</button>
       </fieldset>
 
       <fieldset id="new-causality" class="flex-row">

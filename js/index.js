@@ -1,6 +1,7 @@
 import Dice from './diceManager.js'
 import SimpleRuleManager from './simpleRuleManager.js';
 import VariableManager from './variableManager.js';
+import EffectManager from './effectManager.js';
 import CausalityManager from './causalityManager.js';
 
 
@@ -15,13 +16,17 @@ function start() {
   const variableCreatorEl = document.querySelector("#new-variable");
   const variableManager = new VariableManager(variableEl, variableCreatorEl);
 
-  const simpleRuleEl = document.querySelector("#simple-rules-top-level");
-  const simpleRuleCreatorEl = document.querySelector("#new-simple-rule");
+  const simpleRuleEl = document.querySelector("#simple-causes-top-level");
+  const simpleRuleCreatorEl = document.querySelector("#new-simple-cause");
   const simpleRuleManager = new SimpleRuleManager(simpleRuleEl, simpleRuleCreatorEl, diceManager, variableManager);
+
+  const effectEl = document.querySelector("#effects-top-level");
+  const effectCreatorEl = document.querySelector("#new-effect");
+  const effectManager = new EffectManager(effectEl, effectCreatorEl);
 
   const conditionEl = document.querySelector("#conditions-top-level");
   const conditionsCreatorEl = document.querySelector("#new-causality");
-  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleRuleManager);
+  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleRuleManager, effectManager);
 }
 
 window.addEventListener("load", function () {

@@ -13,9 +13,9 @@ export default class SimpleRuleManager {
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
     this.creatorEl = creatorEl;
-    this.operandBSelectionEl = creatorEl.querySelector("#new-simple-rule-operand-b-selector");
-    this.operandASelectionEl = creatorEl.querySelector("#new-simple-rule-operand-a-selector");
-    this.constantInputEl = creatorEl.querySelector("#new-simple-rule-constant");
+    this.operandBSelectionEl = creatorEl.querySelector("#new-simple-cause-operand-b-selector");
+    this.operandASelectionEl = creatorEl.querySelector("#new-simple-cause-operand-a-selector");
+    this.constantInputEl = creatorEl.querySelector("#new-simple-cause-constant");
 
     this.diceManager = diceManager;
     diceManager.addChangeListener(() => this.refreshVariables());
@@ -43,7 +43,7 @@ export default class SimpleRuleManager {
       rule.depends.add(operandB);
       operandB.requiredBy.add(rule);
     }
-    const keyEl = makeLabel({text: rule.key, tooltip: rule.tooltip, classes: ["simple-rule-key"]});
+    const keyEl = makeLabel({text: rule.key, tooltip: rule.tooltip, classes: ["simple-cause-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
     rule.el = makeFlexRow({children: [keyEl, removeButtonEl]});
@@ -76,9 +76,9 @@ export default class SimpleRuleManager {
   }
 
   prepareAdderButton() {
-    const nameEl = this.creatorEl.querySelector("#new-simple-rule-name");
-    const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-rule-operator-selector");
-    const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
+    const nameEl = this.creatorEl.querySelector("#new-simple-cause-name");
+    const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-cause-operator-selector");
+    const addNewButtonEl = this.creatorEl.querySelector("#new-simple-cause-create");
 
     fillOperators(operatorSelectionEl);
 
@@ -95,7 +95,7 @@ export default class SimpleRuleManager {
         return;
       }
 
-      name = "rule-" + name;
+      name = "cause-" + name;
       if (this.rules[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.rules[name].el);

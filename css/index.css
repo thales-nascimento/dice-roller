@@ -29,7 +29,7 @@ body > fieldset:first-child {
   width: 20em;
 }
 
-.causality-key, .operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
+.causality-key, .operator, .dice-key, .effect-key, .variable-key, .simple-cause-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
   line-height: 24px;
@@ -55,6 +55,12 @@ body > fieldset:first-child {
   color: white;
   width: 10em;
 }
+.effect-key {
+  padding: 0 3px;
+  background-color: deeppink;
+  color: white;
+  width: 10em;
+}
 .operator {
   padding: 0 3px;
   background-color: gold;
@@ -65,7 +71,7 @@ body > fieldset:first-child {
   background-color: darkturquoise;
   width: 2em;
 }
-.simple-rule-key {
+.simple-cause-key {
   padding: 0 3px;
   background-color: darkorange;
   width: 10em;
@@ -131,5 +137,5 @@ body > fieldset:first-child {
 }
 
 /*TODO(THALES) adicionar máximo de linhas na paleta e ativar scroll se necessário*/
-
+/*TODO(thales) rever todas as linhas de css e remover as classes inutilizadas */
 
