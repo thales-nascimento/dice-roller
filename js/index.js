@@ -21,7 +21,7 @@ function start() {
 
   const conditionEl = document.querySelector("#conditions-top-level");
   const conditionsCreatorEl = document.querySelector("#new-causality");
-  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, diceManager, simpleRuleManager);
+  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleRuleManager);
 }
 
 window.addEventListener("load", function () {
