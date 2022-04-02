@@ -25,6 +25,10 @@ body > fieldset:first-child {
   flex-wrap: wrap;
 }
 
+.action-button {
+  width: 20em;
+}
+
 .causality-key, .operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
@@ -103,9 +107,6 @@ body > fieldset:first-child {
 
 #new-dice-presets button {
   margin: 0 4px;
-}
-#new-dice-create {
-  width: 20em;
 }
 .dice-weight {
   height: 24px;
