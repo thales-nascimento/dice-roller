@@ -1,0 +1,24 @@
+.hline {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1em;
+  margin-bottom: 0.2em;
+}
+.hline:before {
+  content: "";
+  flex: 1 1;
+  border-bottom: 1px solid;
+  margin: auto;
+}
+.hline:after {
+  content: "";
+  flex: 9 1;
+  border-bottom: 1px solid;
+  margin: auto;
+}
+.hline:before {
+  margin-right: 10px
+}
+.hline:after {
+  margin-left: 10px
+}

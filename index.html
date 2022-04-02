@@ -2,7 +2,9 @@
   <head>
     <title>Dicer</title>
     <meta charset="utf-8" />
-    <link rel='stylesheet' href='index.css'/>
+    <link rel='stylesheet' href='./css/index.css'/>
+    <link rel='stylesheet' href='./css/hline.css'/>
+    <link rel='stylesheet' href='./css/confirmator.css'/>
     <script src="./js/index.js" type="module"></script>
   </head>
 
@@ -27,17 +29,40 @@
         </fieldset>
       </div>
       <div class="flex-col">
+        <fieldset id="new-dice" class="flex-col">
+          <legend>Create new dice</legend>
+          <div class="flex-row">
+            <label for="faces">Face count:</label>
+            <input name="faces" id="new-dice-faces" type="number" min="2" max="100" value="2" step="1"></input>
+          </div>
+          <div class="flex-row">
+            <label>Presets: </label>
+            <div id="new-dice-presets" class="flex-row">
+              <button data-faces="4">d4</button>
+              <button data-faces="6">d6</button>
+              <button data-faces="8">d8</button>
+              <button data-faces="10">d10</button>
+              <button data-faces="12">d12</button>
+              <button data-faces="20">d20</button>
+            </div>
+          </div>
+          <span class="hline">Face weight</span>
+          <div id="new-dice-face-weights" class="flex-row"></div>
+          <button id="new-dice-create">Create dice</button>
+        </div>
+      </div>
+      <!--TODO(thales) add variable-->
+      <div class="flex-col">
         <fieldset id="new-simple-rule" class="flex-row">
           <legend>Create new simple rule</legend>
           <select id="new-simple-rule-operand-a-selector"></select>
           <select id="new-simple-rule-operator-selector"></select>
           <select id="new-simple-rule-operand-b-selector"></select>
-          <input id="new-simple-rule-constant" type="number" min="1" value="1"></input>
+          <input id="new-simple-rule-constant" type="number" min="1" value="1" step="1"></input>
           <button id="new-simple-rule-create">Create</button>
         </div>
       </div>
     </div>
-
 
     <div id="confirmator" class="flex-row">
       <label id="confirmator-label"></label>

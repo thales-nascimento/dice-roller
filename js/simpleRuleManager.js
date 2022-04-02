@@ -73,7 +73,7 @@ export default class SimpleRuleManager {
 
   nextKey() {
     this.ruleIndex += 1;
-    return `#${this.ruleIndex}`
+    return `%${this.ruleIndex}`
   }
 
   prepareAdderButton() {

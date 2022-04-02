@@ -7,7 +7,8 @@ function start() {
   console.log("dom loaded, start scripts");
 
   const diceEl = document.querySelector("#dices-top-level");
-  const diceManager = new Dice(diceEl);
+  const diceCreatorEl = document.querySelector("#new-dice");
+  const diceManager = new Dice(diceEl, diceCreatorEl);
 
   const variableEl = document.querySelector("#variables-top-level");
   const variableManager = new VariableManager(variableEl);

@@ -54,3 +54,29 @@ export function makeOption({text, value, classes = []}) {
   }
   return optionEl;
 }
+
+export function makeNumberInput({name, min, max, value, step, classes = []}) {
+  console.assert(Array.isArray(classes));
+  const inputEl = document.createElement('input');
+  inputEl.type = "number";
+
+  if (name !== undefined) {
+    inputEl.name = name;
+  }
+  if (min !== undefined) {
+    inputEl.min = min;
+  }
+  if (max !== undefined) {
+    inputEl.max = max;
+  }
+  if (value !== undefined) {
+    inputEl.value = value;
+  }
+  if (step !== undefined) {
+    inputEl.step = step;
+  }
+  for (const c of classes) {
+    inputEl.classList.add(c);
+  }
+  return inputEl;
+}
