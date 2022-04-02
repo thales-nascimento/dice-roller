@@ -4,20 +4,21 @@ import openConfirmator from "./confirmator.js";
 const presets = [4, 6, 8, 10, 12, 20].map(makeBalancedDice);
 
 export default class Dice {
-  constructor(diceEl) {
-    this.diceEl = diceEl;
-    this.diceMenuEl = diceEl.querySelector("#dice-menu");
-    this.generateDiceMenu();
+  constructor(topLevelEl) {
+    this.topLevelEl = topLevelEl;
+    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
+    this.generateMenu();
   }
 
-  generateDiceMenu() {
+  generateMenu() {
     for (let i = 0; i < presets.length; i += 1) {
-      const rowEl = this.generateDiceControlRow(i);
-      this.diceMenuEl.appendChild(rowEl);
+      const rowEl = this.generateRow(i);
+      this.menuEl.appendChild(rowEl);
     }
   }
 
-  generateDiceControlRow(i) {
+  generateRow(i) {
     const preset = presets[i];
     const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
@@ -34,7 +35,7 @@ export default class Dice {
 
   removePreset(i, el) {
     presets.splice(i, 1);
-    this.diceMenuEl.removeChild(el);
+    this.menuEl.removeChild(el);
   }
 }
 

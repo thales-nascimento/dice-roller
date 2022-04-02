@@ -51,10 +51,9 @@ body > fieldset:first-child {
 .menu-remove-button:disabled {
   background-color: gray;
 }
-.adder-button {
+.menu-adder-button {
   margin-top: 4px;
 }
-
 
 
 #confirmator {

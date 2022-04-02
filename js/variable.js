@@ -13,20 +13,21 @@ const presets = [
 ];
 
 export default class Variable {
-  constructor(variableEl) {
-    this.variableEl = variableEl;
-    this.variableMenuEl = variableEl.querySelector("#variable-menu");
-    this.generateVariableMenu();
+  constructor(topLevelEl) {
+    this.topLevelEl = topLevelEl;
+    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
+    this.generateMenu();
   }
 
-  generateVariableMenu() {
+  generateMenu() {
     for (let i = 0; i < presets.length; i += 1) {
-      const rowEl = this.generateVariableRow(i);
-      this.variableMenuEl.appendChild(rowEl);
+      const rowEl = this.generateMenuRow(i);
+      this.menuEl.appendChild(rowEl);
     }
   }
 
-  generateVariableRow(i) {
+  generateMenuRow(i) {
     const preset = presets[i];
     const indexEl = makeLabel({text: `$${i + 1}`, classes: ["menu-index"]});
     const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
@@ -47,6 +48,6 @@ export default class Variable {
 
   removePreset(i, el) {
     presets.splice(i, 1);
-    this.variableMenuEl.removeChild(el);
+    this.menuEl.removeChild(el);
   }
 }
