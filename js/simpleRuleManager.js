@@ -24,7 +24,7 @@ export default class SimpleRuleManager {
 
   generateRow(name, operandA, operator, operandB) {
     const rule = {
-      key: "%" + name,
+      key: name,
       tooltip: `${operandA.key} ${operator.text} `,
       manager: this,
       depends: new Set(),
@@ -33,22 +33,17 @@ export default class SimpleRuleManager {
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);
 
-    const keyEl = makeLabel({text: rule.key, classes: ["simple-rule-key"]});
-    const operandALabelEl = makeLabel({text: operandA.key, classes: ["variable-key"]});
-    const operatorLabelEl = makeLabel({text: operator.text, classes: ["operator"]});
-    let operandBLabelEl;
     if (Number.parseFloat(operandB)) {
-      rule.name += operandB.toString();
-      operandBLabelEl = makeLabel({text: operandB.toString(), classes: ["menu-label", "constant"]});
+      rule.tooltip += operandB.toString();
     } else {
-      rule.name += operandB.key;
+      rule.tooltip += operandB.key;
       rule.depends.add(operandB);
       operandB.requiredBy.add(rule);
-      operandBLabelEl = makeLabel({text: operandB.key, classes: ["menu-label", "variable-key"]});
     }
+    const keyEl = makeLabel({text: rule.key, tooltip: rule.tooltip, classes: ["simple-rule-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
-    rule.el = makeFlexRow({children: [keyEl, operandALabelEl, operatorLabelEl, operandBLabelEl, removeButtonEl]});
+    rule.el = makeFlexRow({children: [keyEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
       const rect = rule.el.getBoundingClientRect();
@@ -87,11 +82,13 @@ export default class SimpleRuleManager {
 
     const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
     addNewButtonEl.addEventListener("click", () => {
-      const name = nameEl.value;
+      let name = nameEl.value;
       if (name === "") {
         nameEl.classList.add("input-error");
         return;
       }
+
+      name = "%" + name;
       if (this.rules[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.rules[name].el);
