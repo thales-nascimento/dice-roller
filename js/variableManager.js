@@ -1,9 +1,8 @@
-import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
 export default class VariableManager {
   constructor(topLevelEl, creatorEl) {
-    this.variableIndex = 0;
     this.variables = {};
     this.changeListeners = [];
 
@@ -17,45 +16,36 @@ export default class VariableManager {
 
   generateRow(name) {
     const variable = {
-      key: this.nextKey(),
-      name: name,
+      key: name,
       requiredBy: new Set(),
     };
 
     const keyEl = makeLabel({text: variable.key, classes: ["variable-key"]});
-    const labelEl = makeLabel({text: variable.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
-    variable.el = makeFlexRow({children: [keyEl, labelEl, removeButtonEl]});
+    variable.el = makeFlexRow({children: [keyEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
       const rect = variable.el .getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete variable ${variable.key} ${variable.name} ?`, () => this.removeVariable(variable));
+      openConfirmator(x, y, `Delete variable ${variable.key} ?`, () => this.removeVariable(variable));
     });
 
     this.variables[variable.key] = variable;
     this.menuEl.appendChild(variable.el );
+    this.onChange();
   }
 
   removeVariable(variable) {
     if (variable.requiredBy.size) {
       for (const dependent of variable.requiredBy) {
-        dependent.el.classList.add("flash");
-        dependent.el.addEventListener("animationend", () => {
-          dependent.el.classList.remove("flash");
-        });
+        flash(dependent.el);
       }
     } else {
       this.menuEl.removeChild(variable.el);
       delete this.variables[variable.key];
       this.onChange();
     }
-  }
-
-  nextKey() {
-    this.variableIndex += 1;
-    return `$${this.variableIndex}`
   }
 
   getVariables() {
@@ -79,10 +69,20 @@ export default class VariableManager {
   prepareAdderButton() {
     const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
     const nameEl = this.creatorEl.querySelector("#new-variable-name");
+    nameEl.addEventListener("change", () => {
+      nameEl.classList.remove("input-error");
+    });
     addNewButtonEl.addEventListener("click", () => {
       const name = nameEl.value;
       if (name !== "") {
-        this.generateRow(nameEl.value);
+        if (this.variables[name] !== undefined) {
+          nameEl.classList.add("input-error");
+          flash(this.variables[name].el);
+        } else {
+          this.generateRow(nameEl.value);
+        }
+      } else {
+        nameEl.classList.add("input-error");
       }
     });
   }

@@ -1,4 +1,4 @@
-import { makeFlexRow, makeButton, makeLabel, makeNumberInput } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, makeNumberInput, flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
 export default class DiceManager {
@@ -51,15 +51,13 @@ export default class DiceManager {
 
     this.dices[dice.key] = dice;
     this.menuEl.appendChild(dice.el);
+    this.onChange();
   }
 
   removeDice(dice) {
     if (dice.requiredBy.size) {
       for (const dependent of dice.requiredBy) {
-        dependent.el.classList.add("flash");
-        dependent.el.addEventListener("animationend", () => {
-          dependent.el.classList.remove("flash");
-        });
+        flash(dependent.el);
       }
     } else {
       this.menuEl.removeChild(dice.el);

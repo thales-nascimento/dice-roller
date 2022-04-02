@@ -81,3 +81,12 @@ export function makeNumberInput({name, min, max, value, step, classes = []}) {
   }
   return inputEl;
 }
+
+export function flash(el) {
+  function removeFlashClass(evt) {
+    evt.target.classList.remove("flash");
+    evt.target.removeEventListener("animationend", removeFlashClass);
+  }
+  el.classList.add("flash");
+  el.addEventListener("animationend", removeFlashClass);
+}
