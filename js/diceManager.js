@@ -1,5 +1,4 @@
-import { makeFlexRow, makeButton, makeLabel, makeNumberInput, flash, warmup } from "./domUtils.js";
-import openConfirmator from "./confirmator.js";
+import { makeFlexRow, makeButton, makeLabel, makeNumberInput, warmup } from "./domUtils.js";
 import Manager from "./manager.js";
 
 export default class DiceManager extends Manager {
@@ -24,6 +23,7 @@ export default class DiceManager extends Manager {
       faces: weights.length,
       balanced: true,
       totalWeight: 0,
+      depends: new Set(),
       requiredBy: new Set(),
     };
     if (dice.faces === 2) {
@@ -45,29 +45,11 @@ export default class DiceManager extends Manager {
     const nameEl = makeLabel({text: dice.name, tooltip: dice.tooltip, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     dice.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
-    removeButtonEl.addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      const rect = removeButtonEl.getBoundingClientRect();
-      const x = rect.right + 4;
-      const y = rect.top;
-      openConfirmator(x, y, `Delete dice ${dice.key}?`, () => this.removeDice(dice));
-    });
+    this.prepareRemoveConfirmationOnButton(removeButtonEl, dice);
 
     this.managed[dice.key] = dice;
     this.menuEl.appendChild(dice.el);
     this.onChange();
-  }
-
-  removeDice(dice) {
-    if (dice.requiredBy.size) {
-      for (const dependent of dice.requiredBy) {
-        flash(dependent.el);
-      }
-    } else {
-      this.menuEl.removeChild(dice.el);
-      delete this.managed[dice.key];
-      this.onChange();
-    }
   }
 
   nextKey() {

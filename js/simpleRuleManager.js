@@ -1,7 +1,6 @@
-import { makeFlexRow, makeButton, makeLabel, makeOption, flash, warmup } from "./domUtils.js";
-import openConfirmator from "./confirmator.js";
+import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
 import { operators } from "./condition.js"
-import Manager from "./manager.js";
+import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 const constantText = "const";
 
@@ -46,32 +45,11 @@ export default class SimpleRuleManager extends Manager {
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
     rule.el = makeFlexRow({children: [keyEl, removeButtonEl]});
-    removeButtonEl.addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      const rect = rule.el.getBoundingClientRect();
-      const x = rect.right + 4;
-      const y = rect.top;
-      openConfirmator(x, y, `Delete rule ${rule.key} ?`, () => this.removeRule(rule));
-    });
+    this.prepareRemoveConfirmationOnButton(removeButtonEl, rule);
 
     this.managed[rule.key] = rule;
     this.menuEl.appendChild(rule.el);
     this.onChange();
-  }
-
-  removeRule(rule) {
-    if (rule.requiredBy.size) {
-      for (const dependent of rule.requiredBy) {
-        flash(dependent.el);
-      }
-    } else {
-      for (const dep of rule.depends) {
-        dep.requiredBy.delete(rule);
-      }
-      this.menuEl.removeChild(rule.el);
-      delete this.managed[rule.key];
-      this.onChange();
-    }
   }
 
   prepareAdderButton() {
@@ -81,32 +59,26 @@ export default class SimpleRuleManager extends Manager {
 
     fillOperators(operatorSelectionEl);
 
-    const removeInputError = (evt) => evt.target.classList.remove("input-error");
     nameEl.addEventListener("input", removeInputError);
     this.operandASelectionEl.addEventListener("change", removeInputError);
 
     this.refreshVariables();
 
     addNewButtonEl.addEventListener("click", () => {
-      let name = nameEl.value;
-      if (name === "") {
-        nameEl.classList.add("input-error");
+      if (!validateInputValue(nameEl)) {
         return;
       }
 
-      name = "cause-" + name;
-      if (this.managed[name] !== undefined) {
-        nameEl.classList.add("input-error");
-        flash(this.managed[name].el);
+      const name = "cse-" + nameEl.value;
+      if (!this.validateDuplicateManagedKey(name, nameEl)) {
+        return;
+      }
+
+      if (!validateInputValue(this.operandASelectionEl)) {
         return;
       }
 
       const operandAKey = this.operandASelectionEl.value;
-      if (operandAKey === "") {
-        this.operandASelectionEl.classList.add("input-error");
-        return;
-      }
-
       const operandA = this.diceManager.getManagedByKey(operandAKey) || this.variableManager.getManagedByKey(operandAKey);
       const operator = operators[operatorSelectionEl.value];
       let operandB;

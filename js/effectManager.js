@@ -1,6 +1,5 @@
 import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
-import openConfirmator from "./confirmator.js";
-import Manager from "./manager.js";
+import Manager, { removeInputError } from "./manager.js";
 
 export default class EffectManager extends Manager {
   constructor(topLevelEl, creatorEl) {
@@ -17,41 +16,23 @@ export default class EffectManager extends Manager {
     const effect = {
       key: name,
       requiredBy: new Set(),
+      depends: new Set(),
     };
 
     const keyEl = makeLabel({text: effect.key, classes: ["effect-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     effect.el = makeFlexRow({children: [keyEl, removeButtonEl]});
-    removeButtonEl.addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      const rect = effect.el .getBoundingClientRect();
-      const x = rect.right + 4;
-      const y = rect.top;
-      openConfirmator(x, y, `Delete effect ${effect.key} ?`, () => this.removeEffect(effect));
-    });
+    this.prepareRemoveConfirmationOnButton(removeButtonEl, effect);
 
     this.managed[effect.key] = effect;
     this.menuEl.appendChild(effect.el );
     this.onChange();
   }
 
-  removeEffect(variable) {
-    if (variable.requiredBy.size) {
-      for (const dependent of variable.requiredBy) {
-        flash(dependent.el);
-      }
-    } else {
-      this.menuEl.removeChild(variable.el);
-      delete this.managed[variable.key];
-      this.onChange();
-    }
-  }
-
   prepareAdderButton() {
     const nameEl = this.creatorEl.querySelector("#new-effect-name");
     const addNewButtonEl = this.creatorEl.querySelector("#new-effect-create");
 
-    const removeInputError = (evt) => evt.target.classList.remove("input-error");
     nameEl.addEventListener("input", removeInputError);
 
     addNewButtonEl.addEventListener("click", () => {

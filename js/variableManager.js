@@ -1,6 +1,5 @@
 import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
-import openConfirmator from "./confirmator.js";
-import Manager from "./manager.js";
+import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class VariableManager extends Manager {
   constructor(topLevelEl, creatorEl) {
@@ -16,55 +15,33 @@ export default class VariableManager extends Manager {
   generateRow(name) {
     const variable = {
       key: name,
+      depends: new Set(),
       requiredBy: new Set(),
     };
 
     const keyEl = makeLabel({text: variable.key, classes: ["variable-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     variable.el = makeFlexRow({children: [keyEl, removeButtonEl]});
-    removeButtonEl.addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      const rect = variable.el .getBoundingClientRect();
-      const x = rect.right + 4;
-      const y = rect.top;
-      openConfirmator(x, y, `Delete variable ${variable.key} ?`, () => this.removeVariable(variable));
-    });
+    this.prepareRemoveConfirmationOnButton(removeButtonEl, variable);
 
     this.managed[variable.key] = variable;
     this.menuEl.appendChild(variable.el );
     this.onChange();
   }
 
-  removeVariable(variable) {
-    if (variable.requiredBy.size) {
-      for (const dependent of variable.requiredBy) {
-        flash(dependent.el);
-      }
-    } else {
-      this.menuEl.removeChild(variable.el);
-      delete this.managed[variable.key];
-      this.onChange();
-    }
-  }
-
   prepareAdderButton() {
     const nameEl = this.creatorEl.querySelector("#new-variable-name");
     const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
 
-    const removeInputError = (evt) => evt.target.classList.remove("input-error");
     nameEl.addEventListener("input", removeInputError);
 
     addNewButtonEl.addEventListener("click", () => {
-      let name = nameEl.value;
-      if (name === "") {
-        nameEl.classList.add("input-error");
+      if (!validateInputValue(nameEl)) {
         return;
       }
 
-      name = "var-" + name;
-      if (this.managed[name] !== undefined) {
-        nameEl.classList.add("input-error");
-        flash(this.managed[name].el);
+      const name = "var-" + nameEl.value;
+      if (!this.validateDuplicateManagedKey(name, nameEl)) {
         return;
       }
 

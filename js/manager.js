@@ -1,3 +1,6 @@
+import { flash } from "./domUtils.js";
+import openConfirmator from "./confirmator.js";
+
 export default class Manager {
   constructor() {
     this.changeListeners = [];
@@ -21,4 +24,51 @@ export default class Manager {
       cb();
     }
   }
+
+  removeManaged(managedInstance) {
+    if (managedInstance.requiredBy.size) {
+      for (const dependent of managedInstance.requiredBy) {
+        flash(dependent.el);
+      }
+    } else {
+      for (const dep of managedInstance.depends) {
+        dep.requiredBy.delete(managedInstance);
+      }
+      console.assert(this.menuEl !== undefined, "all Manager subclasses must provide menuEl.");
+      this.menuEl.removeChild(managedInstance.el);
+      delete this.managed[managedInstance.key];
+      this.onChange();
+    }
+  }
+
+  prepareRemoveConfirmationOnButton(buttonEl, managedInstance) {
+    buttonEl.addEventListener("click", (evt) => {
+      evt.stopPropagation();
+      const rect = managedInstance.el.getBoundingClientRect();
+      const x = rect.right + 4;
+      const y = rect.top;
+      openConfirmator(x, y, `Delete ${managedInstance.key}?`, () => this.removeManaged(managedInstance));
+    });
+  }
+
+  validateDuplicateManagedKey(key, inputEl) {
+    if (this.managed[key] !== undefined) {
+      inputEl.classList.add("input-error");
+      flash(this.managed[key].el);
+      return false;
+    }
+    return true;
+  }
+}
+
+export function removeInputError(evt) {
+  evt.target.classList.remove("input-error");
+}
+
+export function validateInputValue(el) {
+  if (el.value === "") {
+    el.classList.add("input-error");
+    return false;
+  }
+  return true;
 }
