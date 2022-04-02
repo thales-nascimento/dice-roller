@@ -21,7 +21,7 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
-.operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
+.causality-key, .operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
   line-height: 24px;
@@ -60,6 +60,11 @@ body > fieldset:first-child {
 .simple-rule-key {
   padding: 0 3px;
   background-color: darkorange;
+  width: 10em;
+}
+.causality-key {
+  padding: 0 3px;
+  background-color: forestgreen;
   width: 10em;
 }
 .menu-remove-button {

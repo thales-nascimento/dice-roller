@@ -7,6 +7,7 @@ const constantText = "const";
 export default class SimpleRuleManager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
     this.rules = {};
+    this.changeListeners = [];
 
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
@@ -29,7 +30,6 @@ export default class SimpleRuleManager {
     const rule = {
       key: name,
       tooltip: `${operandA.key} ${operator.text} `,
-      manager: this,
       depends: new Set(),
       requiredBy: new Set(),
     };
@@ -52,30 +52,35 @@ export default class SimpleRuleManager {
       const rect = rule.el.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete rule ${rule.name} ?`, () => this.removeRule(rule));
+      openConfirmator(x, y, `Delete rule ${rule.key} ?`, () => this.removeRule(rule));
     });
 
     this.rules[rule.key] = rule;
     this.menuEl.appendChild(rule.el);
+    this.onChange();
   }
 
   removeRule(rule) {
-    for (const dep of rule.depends) {
-      console.log(dep);
-      dep.requiredBy.delete(rule);
+    if (rule.requiredBy.size) {
+      for (const dependent of rule.requiredBy) {
+        flash(dependent.el);
+      }
+    } else {
+      for (const dep of rule.depends) {
+        dep.requiredBy.delete(rule);
+      }
+      this.menuEl.removeChild(rule.el);
+      delete this.rules[rule.key];
+      this.onChange();
     }
-    this.menuEl.removeChild(rule.el);
-    delete this.rules[rule.key];
   }
 
   prepareAdderButton() {
     const nameEl = this.creatorEl.querySelector("#new-simple-rule-name");
     const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-rule-operator-selector");
-    const operatorOptionEls = Object.values(operators).map(op => makeOption({text: op.text, value: op.text}));
+    const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
 
-    for (const opEl of operatorOptionEls) {
-      operatorSelectionEl.appendChild(opEl);
-    }
+    fillOperators(operatorSelectionEl);
 
     const removeInputError = (evt) => evt.target.classList.remove("input-error");
     nameEl.addEventListener("input", removeInputError);
@@ -83,7 +88,6 @@ export default class SimpleRuleManager {
 
     this.refreshVariables();
 
-    const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
     addNewButtonEl.addEventListener("click", () => {
       let name = nameEl.value;
       if (name === "") {
@@ -91,7 +95,7 @@ export default class SimpleRuleManager {
         return;
       }
 
-      name = "%" + name;
+      name = "rule-" + name;
       if (this.rules[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.rules[name].el);
@@ -111,6 +115,7 @@ export default class SimpleRuleManager {
         const operandBKey = this.operandBSelectionEl.value;
         operandB = this.diceManager.getDiceByKey(operandBKey) || this.variableManager.getVariableByKey(operandBKey);
       } else {
+        //TODO(thales) check if constant makes sense against dice
         operandB = this.constantInputEl.value;
       }
       this.generateRow(name, operandA, operator, operandB);
@@ -145,6 +150,31 @@ export default class SimpleRuleManager {
       this.operandASelectionEl.appendChild(variableEl);
     }
     warmup("change", this.operandASelectionEl);
+  }
+
+  getRules() {
+    return Object.values(this.rules);
+  }
+
+  getRuleByKey(key) {
+    return this.rules[key];
+  }
+
+  addChangeListener(callback) {
+    this.changeListeners.push(callback);
+  }
+
+  onChange() {
+    for (const cb of this.changeListeners) {
+      cb();
+    }
+  }
+}
+
+function fillOperators(operatorSelectionEl) {
+  const operatorOptionEls = Object.values(operators).map(op => makeOption({text: op.text, value: op.text}));
+  for (const opEl of operatorOptionEls) {
+    operatorSelectionEl.appendChild(opEl);
   }
 }
 

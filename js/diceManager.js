@@ -22,11 +22,15 @@ export default class DiceManager {
     const dice = {
       key: this.nextKey(),
       faces: weights.length,
-      name: `d${weights.length}`,
       balanced: true,
       totalWeight: 0,
       requiredBy: new Set(),
     };
+    if (dice.faces === 2) {
+      dice.name = `coin`;
+    } else {
+      dice.name = `dice-${weights.length}`;
+    }
     for (const w of weights) {
       dice.balanced &&= w === weights[0];
       dice.totalWeight += w;
@@ -46,7 +50,7 @@ export default class DiceManager {
       const rect = removeButtonEl.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete dice ${dice.key} ${dice.name}?`, () => this.removeDice(dice));
+      openConfirmator(x, y, `Delete dice ${dice.key}?`, () => this.removeDice(dice));
     });
 
     this.dices[dice.key] = dice;
@@ -80,9 +84,10 @@ export default class DiceManager {
   }
 
   prepareAdderButton() {
+    const addNewButtonEl = this.creatorEl.querySelector("#new-dice-create");
+
     this.prepareFacesChange();
 
-    const addNewButtonEl = this.creatorEl.querySelector("#new-dice-create");
     addNewButtonEl.addEventListener("click", () => {
       const weights = [];
       for (const weightEl of this.faceWeightsEl.childNodes) {

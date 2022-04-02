@@ -67,12 +67,11 @@ export default class VariableManager {
   }
 
   prepareAdderButton() {
-    const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
     const nameEl = this.creatorEl.querySelector("#new-variable-name");
+    const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
 
-    nameEl.addEventListener("input", () => {
-      nameEl.classList.remove("input-error");
-    });
+    const removeInputError = (evt) => evt.target.classList.remove("input-error");
+    nameEl.addEventListener("input", removeInputError);
 
     addNewButtonEl.addEventListener("click", () => {
       let name = nameEl.value;
@@ -81,7 +80,7 @@ export default class VariableManager {
         return;
       }
 
-      name = "$" + name;
+      name = "var-" + name;
       if (this.variables[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.variables[name].el);
