@@ -1,7 +1,6 @@
 import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 import { gt } from "./operator.js"
-import State from './state.js'
 
 class Condition {
   constructor(operandGetter, operation, constant) {
@@ -16,8 +15,8 @@ class Condition {
   }
 }
 
-export default class BasicRule {
-  constructor(topLevelEl) {
+export default class BasicRuleManager {
+  constructor(topLevelEl, variableManager) {
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
     this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
@@ -47,7 +46,6 @@ export default class BasicRule {
   }
 
   removePreset(i, el) {
-    presets.splice(i, 1);
     this.menuEl.removeChild(el);
   }
 }

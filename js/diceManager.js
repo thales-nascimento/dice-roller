@@ -3,7 +3,7 @@ import openConfirmator from "./confirmator.js";
 
 const presets = [4, 6, 8, 10, 12, 20].map(makeBalancedDice);
 
-export default class Dice {
+export default class DiceManager {
   constructor(topLevelEl) {
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");

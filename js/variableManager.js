@@ -12,7 +12,7 @@ const presets = [
   }
 ];
 
-export default class Variable {
+export default class VariableManager {
   constructor(topLevelEl) {
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
