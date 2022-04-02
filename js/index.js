@@ -3,6 +3,7 @@ import SimpleRuleManager from './simpleRuleManager.js';
 import VariableManager from './variableManager.js';
 import EffectManager from './effectManager.js';
 import CausalityManager from './causalityManager.js';
+import TableManager from './tableManager.js';
 
 
 function start() {
@@ -27,6 +28,9 @@ function start() {
   const conditionEl = document.querySelector("#conditions-top-level");
   const conditionsCreatorEl = document.querySelector("#new-causality");
   const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleRuleManager, effectManager);
+
+  const tableEl = document.querySelector("#table-top-level")
+  const tableManager = new TableManager(tableEl, diceManager, causalityManager);
 }
 
 window.addEventListener("load", function () {
