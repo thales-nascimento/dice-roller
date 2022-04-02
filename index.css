@@ -21,7 +21,7 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
-.index-variable, .menu-label, .menu-remove-button {
+.variable-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
   line-height: 24px;
@@ -35,12 +35,22 @@ body > fieldset:first-child {
   width: 4em;
   padding: 0 8px;
 }
-.index-variable {
+.variable-key {
   padding: 0 3px;
   background-color: aquamarine;
   width: 2em;
 }
-.index-basic-rule {
+.operator {
+  padding: 0 3px;
+  background-color: gold;
+  width: 1em;
+}
+.constant {
+  padding: 0 3px;
+  background-color: darkturquoise;
+  width: 2em;
+}
+.simple-rule-key {
   padding: 0 3px;
   background-color: darkorange;
   width: 2em;
@@ -84,10 +94,5 @@ body > fieldset:first-child {
   margin: 2px 5px;
   width: 60px;
   color: red;
-  font-weight: bold;
-}
-#confirmator-no {
-  margin: 2px 5px;
-  width: 60px;
   font-weight: bold;
 }

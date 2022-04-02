@@ -1,10 +1,8 @@
 const confirmatorEl = document.querySelector("#confirmator");
+const labelEl = confirmatorEl.querySelector("#confirmator-label");
 const yesEl = confirmatorEl.querySelector("#confirmator-yes");
-const noEl = confirmatorEl.querySelector("#confirmator-no");
 let onYes = undefined;
 let opened = false;
-
-noEl.addEventListener("click", closeConfirmator);
 
 yesEl.addEventListener("click", () => {
   if (onYes !== undefined) {
@@ -36,8 +34,9 @@ function closeConfirmator() {
   opened = false;
 }
 
-export default function openConfirmator(x, y, yesCallback) {
+export default function openConfirmator(x, y, text, yesCallback) {
   onYes = yesCallback
+  labelEl.textContent = text;
   confirmatorEl.style.top = `${y}px`;
   confirmatorEl.style.left = `${x}px`;
   confirmatorEl.classList.add("visible");

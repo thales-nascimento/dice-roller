@@ -14,40 +14,60 @@ const presets = [
 
 export default class VariableManager {
   constructor(topLevelEl) {
+    this.variableIndex = 0;
+    this.variables = {};
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
     this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
-    this.generateMenu();
+    this.generatePresets();
   }
 
-  generateMenu() {
-    for (let i = 0; i < presets.length; i += 1) {
-      const rowEl = this.generateMenuRow(i);
-      this.menuEl.appendChild(rowEl);
+  generatePresets() {
+    for (const preset of presets) {
+      const rowEl = this.generateMenuRow(preset);
     }
   }
 
-  generateMenuRow(i) {
-    const preset = presets[i];
-    const indexEl = makeLabel({text: `$${i + 1}`, classes: ["index-variable"]});
-    const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
+  generateMenuRow(recipe) {
+    const variableKey = this.nextKey();
+    const keyEl = makeLabel({text: variableKey, classes: ["variable-key"]});
+    const labelEl = makeLabel({text: recipe.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
-    if (!preset.removable) {
+    if (!recipe.removable) {
       removeButtonEl.disabled = true;
     }
-    const rowEl = makeFlexRow({children: [indexEl, labelEl, removeButtonEl]});
+    const rowEl = makeFlexRow({children: [keyEl, labelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
       const rect = rowEl.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, () => this.removePreset(i, rowEl));
+      openConfirmator(x, y, `Delete variable ${recipe.name} ?`, () => this.removeVariable(variableKey));
     });
-    return rowEl;
+
+    this.variables[variableKey] = {
+      key: variableKey,
+      el: rowEl,
+      requiredBy: new Set(),
+    };
+    this.menuEl.appendChild(rowEl);
   }
 
-  removePreset(i, el) {
-    presets.splice(i, 1);
-    this.menuEl.removeChild(el);
+  removeVariable(variableKey) {
+    this.menuEl.removeChild(this.variables[variableKey].el);
+    delete this.variables[variableKey];
+  }
+
+  nextKey() {
+    this.variableIndex += 1;
+    return `$${this.variableIndex}`
+  }
+
+  getVariables() {
+    return this.variables
+  }
+
+  getVariableByKey(key) {
+    return this.variables[key];
   }
 }

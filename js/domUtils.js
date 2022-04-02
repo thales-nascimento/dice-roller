@@ -33,7 +33,7 @@ export function makeButton({text = "", classes = []}) {
   return buttonEl;
 }
 
-export function makeLabel({text = "", target = "", classes = []}) {
+export function makeLabel({text, target, classes = []}) {
   console.assert(Array.isArray(classes));
   const labelEl = document.createElement('label');
   labelEl.textContent = text;
@@ -42,4 +42,15 @@ export function makeLabel({text = "", target = "", classes = []}) {
     labelEl.classList.add(c);
   }
   return labelEl;
+}
+
+export function makeOption({text, value, classes = []}) {
+  console.assert(Array.isArray(classes));
+  const optionEl = document.createElement('option');
+  optionEl.textContent = text;
+  optionEl.value = value;
+  for (const c of classes) {
+    optionEl.classList.add(c);
+  }
+  return optionEl;
 }

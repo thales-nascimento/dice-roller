@@ -19,8 +19,8 @@ export default class DiceManager {
   }
 
   generateRow(i) {
-    const preset = presets[i];
-    const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
+    const recipe = presets[i];
+    const labelEl = makeLabel({text: recipe.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     const rowEl = makeFlexRow({children: [labelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
@@ -28,7 +28,7 @@ export default class DiceManager {
       const rect = removeButtonEl.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, () => this.removePreset(i, rowEl));
+      openConfirmator(x, y, `Delete dice ${recipe.name}?`, () => this.removePreset(i, rowEl));
     });
     return rowEl;
   }

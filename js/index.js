@@ -1,5 +1,5 @@
 import Dice from './diceManager.js'
-import BasicRule from './basicRuleManager.js';
+import SimpleRuleManager from './simpleRuleManager.js';
 import VariableManager from './variableManager.js';
 
 
@@ -7,11 +7,14 @@ function start() {
   console.log("dom loaded, start scripts");
 
   const diceEl = document.querySelector("#dices-top-level");
-  const dice = new Dice(diceEl);
+  const diceManager = new Dice(diceEl);
+
   const variableEl = document.querySelector("#variables-top-level");
-  const variable = new VariableManager(variableEl);
+  const variableManager = new VariableManager(variableEl);
+
   const simpleRuleEl = document.querySelector("#simple-rules-top-level");
-  const basicRule = new BasicRule(simpleRuleEl);
+  const simpleRuleCreatorEl = document.querySelector("#new-simple-rule");
+  const simpleRuleManager = new SimpleRuleManager(simpleRuleEl, simpleRuleCreatorEl, variableManager);
 }
 
 window.addEventListener("load", function () {

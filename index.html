@@ -12,31 +12,36 @@
         <fieldset id="dices-top-level" class="flex-col">
           <legend>Available dices</legend>
           <div class="menu-list flex-col"></div>
-          <button class="menu-adder-button">Add dice</button>
         </fieldset>
         <fieldset id="variables-top-level" class="flex-col">
           <legend>Available variables</legend>
           <div class="menu-list flex-col"></div>
-          <button class="menu-adder-button">Add variable</button>
         </fieldset>
         <fieldset id="simple-rules-top-level" class="flex-col">
           <legend>Available simple rules</legend>
           <div class="menu-list flex-col"></div>
-          <button class="menu-adder-button">Add rule</button>
         </fieldset>
         <fieldset id="complex-rules-top-level" class="flex-col">
           <legend>Available complex rules</legend>
           <div class="menu-list flex-col"></div>
-          <button class="menu-adder-button">Add rule</button>
         </fieldset>
+      </div>
+      <div class="flex-col">
+        <fieldset id="new-simple-rule" class="flex-row">
+          <legend>Create new simple rule</legend>
+          <select id="new-simple-rule-operand-a-selector"></select>
+          <select id="new-simple-rule-operator-selector"></select>
+          <select id="new-simple-rule-operand-b-selector"></select>
+          <input id="new-simple-rule-constant" type="number" min="1" value="1"></input>
+          <button id="new-simple-rule-create">Create</button>
+        </div>
       </div>
     </div>
 
 
     <div id="confirmator" class="flex-row">
-      <label id="confirmator-label">Delete preset?</label>
+      <label id="confirmator-label"></label>
       <button id="confirmator-yes">Delete</button>
-      <button id="confirmator-no">No</button>
     </div>
   </body>
 </html>
