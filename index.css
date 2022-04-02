@@ -25,65 +25,31 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
-.modal {
+#confirmator {
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  padding: 2rem;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  visibility: hidden;
-  opacity: 0;
-  transition: all 0.1s ease;
-}
-.modal .modal-backdrop {
-  background: rgba(0, 0, 0, 0.7);
-  height: 100%;
-  width: 100%;
-  position: fixed;
-}
-.modal .modal-content {
-  background: #fff;
-  border-radius: 5px;
-  max-width: 600px;
-  position: fixed;
-  top: -100%;
-  transition: all 0.1s ease;
+  margin: 2px 10px;
   z-index: 1000;
+  background-color: burlywood;
+  visibility: hidden;
 }
-.modal .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding: 1.5rem;
-}
-.modal .modal-header .close-modal {
-  font-size: 1rem;
-  padding: 0;
-  margin: 0;
-  height: 30px;
-  width: 30px;
-  text-align: center;
-}
-.modal .modal-header .close-modal:hover {
-  color: #000;
-}
-.modal .modal-body {
-  padding: 1.5rem;
-}
-.modal .modal-footer {
-  border-top: 1px solid #ccc;
-  padding: 1rem;
-  text-align: right;
-}
-.modal.visible {
-  opacity: 1;
+#confirmator.visible {
   visibility: visible;
 }
-.modal.visible .modal-content {
-  top: 25%;
+#confirmator-label {
+  display: block;
+  margin: 0 5px;
 }
-
+#confirmator-yes {
+  margin: 2px 5px;
+  width: 60px;
+  color: red;
+  font-weight: bold;
+}
+#confirmator-no {
+  margin: 2px 5px;
+  width: 60px;
+  font-weight: bold;
+}

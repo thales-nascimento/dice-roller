@@ -1,5 +1,5 @@
 import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
-import openModal from "./modal.js";
+import openConfirmator from "./confirmator.js";
 
 const presets = [4, 6, 8, 10, 12, 20].map(makeBalancedDice);
 
@@ -22,11 +22,14 @@ export default class Dice {
     const addButtonEl = makeButton({text: "+", classes: ["plus-button"]});
     const labelEl = makeLabel({text: p.name, classes: ["dice-label"]});
     const rowEl = makeFlexRow({children: [removeButtonEl, addButtonEl, labelEl]});
-    removeButtonEl.addEventListener("click", () => openModal({
-      title: `Remove dice ${p.name}`,
-      body: `Are you sure you want to remove dice ${p.name} from presets?`,
-      okCallback: () => this.removePreset(p, rowEl),
-    }));
+    removeButtonEl.addEventListener("click", (evt) => {
+      evt.stopPropagation();
+      const rect = rowEl.getBoundingClientRect();
+      const x = rect.right + 4;
+      const y = rect.top;
+      console.log(x, y);
+      openConfirmator(x, y, () => this.removePreset(p, rowEl));
+    });
     return rowEl;
   }
 

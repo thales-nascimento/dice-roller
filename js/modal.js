@@ -1,9 +1,9 @@
-const modal = document.querySelector(".modal");
+const modalEl = document.querySelector(".modal");
 const closeEls = document.querySelectorAll(".close-modal");
-const modalTitleEl = modal.querySelector(".modal-title");
-const bodyEl = modal.querySelector(".modal-body p");
-const okEl = modal.querySelector(".modal-ok");
-const cancelEl = modal.querySelector(".modal-cancel");
+const modalTitleEl = modalEl.querySelector(".modal-title");
+const bodyEl = modalEl.querySelector(".modal-body p");
+const okEl = modalEl.querySelector(".modal-ok");
+const cancelEl = modalEl.querySelector(".modal-cancel");
 let onOk = undefined;
 
 for (const el of closeEls) {
@@ -17,7 +17,7 @@ okEl.addEventListener("click", () => {
 })
 
 function closeModal() {
-  modal.classList.remove("visible");
+  modalEl.classList.remove("visible");
 }
 
 export default function openModal({title = "", body = "", ok = "ok", cancel = "Cancel", okCallback = undefined}) {
@@ -26,5 +26,5 @@ export default function openModal({title = "", body = "", ok = "ok", cancel = "C
   okEl.textContent = ok;
   cancelEl.textContent = cancel;
   onOk = okCallback;
-  modal.classList.add("visible");
+  modalEl.classList.add("visible");
 }
