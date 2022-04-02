@@ -11,31 +11,28 @@ export default class Dice {
   }
 
   generateDiceMenu() {
-    for (const p of presets) {
-      const rowEl = this.generateDiceControlRow(p);
+    for (let i = 0; i < presets.length; i += 1) {
+      const rowEl = this.generateDiceControlRow(i);
       this.diceMenuEl.appendChild(rowEl);
     }
   }
 
-  generateDiceControlRow(p) {
-    const removeButtonEl = makeButton({text: "×", classes: ["remove-button"]});
-    const addButtonEl = makeButton({text: "+", classes: ["plus-button"]});
-    const labelEl = makeLabel({text: p.name, classes: ["dice-label"]});
-    const rowEl = makeFlexRow({children: [removeButtonEl, addButtonEl, labelEl]});
+  generateDiceControlRow(i) {
+    const preset = presets[i];
+    const labelEl = makeLabel({text: preset.name, classes: ["menu-label"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
+    const rowEl = makeFlexRow({children: [labelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
-      const rect = rowEl.getBoundingClientRect();
+      const rect = removeButtonEl.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      console.log(x, y);
-      openConfirmator(x, y, () => this.removePreset(p, rowEl));
+      openConfirmator(x, y, () => this.removePreset(i, rowEl));
     });
     return rowEl;
   }
 
-  removePreset(preset, el) {
-    const i = presets.indexOf(preset);
-    console.assert(i !== undefined);
+  removePreset(i, el) {
     presets.splice(i, 1);
     this.diceMenuEl.removeChild(el);
   }

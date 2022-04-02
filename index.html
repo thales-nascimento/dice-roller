@@ -9,13 +9,19 @@
   <body>
     <div class="flex-col">
       <div class="flex-row">
-        <fieldset id="dice-top-level" class="flex-row">
-          <legend>Dices</legend>
+        <fieldset id="dices-top-level" class="flex-col">
+          <legend>Available dices</legend>
           <div id="dice-menu" class="flex-col"></div>
-          <div id="dices" class="flex-col"></div>
+          <!--TODO(thales) adicionar botao para criar dado-->
         </fieldset>
-        <fieldset id="rules-top-level" class="flex-row">
-          <legend>Rules</legend>
+        <fieldset id="variables-top-level" class="flex-col">
+          <legend>Available variables</legend>
+          <div id="variable-menu" class="flex-col"></div>
+          <button class="adder-button">Add variable</button>
+        </fieldset>
+        <fieldset id="rules-top-level" class="flex-col">
+          <legend>Available rules</legend>
+          <div id="rule-menu" class="flex-col"></div>
         </fieldset>
       </div>
     </div>

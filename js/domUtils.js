@@ -43,4 +43,3 @@ export function makeLabel({text = "", target = "", classes = []}) {
   }
   return labelEl;
 }
-
