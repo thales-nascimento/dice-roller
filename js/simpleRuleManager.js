@@ -21,49 +21,50 @@ export default class SimpleRuleManager {
   }
 
   generateRow(operandA, operator, operandB) {
-    const ruleKey = this.nextKey();
-    const depends = new Set();
-    depends.add(operandA.key);
-    operandA.requiredBy.add(ruleKey);
+    const rule = {
+      name: `${operandA.key} ${operator.text} `,
+      key: this.nextKey(),
+      depends: new Set(),
+      requiredBy: new Set(),
+    };
+    rule.depends.add(operandA);
+    operandA.requiredBy.add(rule);
 
-    let ruleName = `${operandA.key} ${operator.text} `;
-
-    const keyEl = makeLabel({text: ruleKey, classes: ["variable-key", "simple-rule-key"]});
+    const keyEl = makeLabel({text: rule.key, classes: ["variable-key", "simple-rule-key"]});
     const operandALabelEl = makeLabel({text: operandA.key, classes: ["menu-label", "variable-key"]});
     const operatorLabelEl = makeLabel({text: operator.text, classes: ["menu-label", "operator"]});
     let operandBLabelEl;
     if (Number.parseFloat(operandB)) {
-      ruleName += operandB.toString();
+      rule.name += operandB.toString();
       operandBLabelEl = makeLabel({text: operandB.toString(), classes: ["menu-label", "constant"]});
     } else {
-      ruleName += operandB.key;
-      depends.add(operandB.key);
-      operandB.requiredBy.add(ruleKey);
+      rule.name += operandB.key;
+      rule.depends.add(operandB);
+      operandB.requiredBy.add(rule);
       operandBLabelEl = makeLabel({text: operandB.key, classes: ["menu-label", "variable-key"]});
     }
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
-    const rowEl = makeFlexRow({children: [keyEl, operandALabelEl, operatorLabelEl, operandBLabelEl, removeButtonEl]});
+    rule.el = makeFlexRow({children: [keyEl, operandALabelEl, operatorLabelEl, operandBLabelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
-      const rect = rowEl.getBoundingClientRect();
+      const rect = rule.el.getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete rule ${ruleName} ?`, () => this.removeRule(ruleKey));
+      openConfirmator(x, y, `Delete rule ${rule.name} ?`, () => this.removeRule(rule));
     });
 
-    this.rules[ruleKey] = {
-      key: ruleKey,
-      el: rowEl,
-      depends: depends,
-      requiredBy: new Set(),
-    };
-    this.menuEl.appendChild(rowEl);
+    this.rules[rule.key] = rule;
+    this.menuEl.appendChild(rule.el);
   }
 
-  removeRule(ruleKey) {
-    this.menuEl.removeChild(this.rules[ruleKey].el);
-    delete this.rules[ruleKey];
+  removeRule(rule) {
+    for (const dep of rule.depends) {
+      console.log(dep);
+      dep.requiredBy.delete(rule);
+    }
+    this.menuEl.removeChild(rule.el);
+    delete this.rules[rule.key];
   }
 
   nextKey() {
@@ -119,3 +120,5 @@ export default class SimpleRuleManager {
     }
   }
 }
+
+/*TODO(thales) não permitir adicionar duplicatas */;

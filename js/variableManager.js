@@ -24,38 +24,47 @@ export default class VariableManager {
 
   generatePresets() {
     for (const preset of presets) {
-      const rowEl = this.generateMenuRow(preset);
+      this.generateMenuRow(preset);
     }
   }
 
   generateMenuRow(recipe) {
-    const variableKey = this.nextKey();
-    const keyEl = makeLabel({text: variableKey, classes: ["variable-key"]});
+    const variable = {
+      key: this.nextKey(),
+      requiredBy: new Set(),
+    };
+
+    const keyEl = makeLabel({text: variable.key, classes: ["variable-key"]});
     const labelEl = makeLabel({text: recipe.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
     if (!recipe.removable) {
       removeButtonEl.disabled = true;
     }
-    const rowEl = makeFlexRow({children: [keyEl, labelEl, removeButtonEl]});
+    variable.el = makeFlexRow({children: [keyEl, labelEl, removeButtonEl]});
     removeButtonEl.addEventListener("click", (evt) => {
       evt.stopPropagation();
-      const rect = rowEl.getBoundingClientRect();
+      const rect = variable.el .getBoundingClientRect();
       const x = rect.right + 4;
       const y = rect.top;
-      openConfirmator(x, y, `Delete variable ${recipe.name} ?`, () => this.removeVariable(variableKey));
+      openConfirmator(x, y, `Delete variable ${recipe.name} ?`, () => this.removeVariable(variable));
     });
 
-    this.variables[variableKey] = {
-      key: variableKey,
-      el: rowEl,
-      requiredBy: new Set(),
-    };
-    this.menuEl.appendChild(rowEl);
+    this.variables[variable.key] = variable;
+    this.menuEl.appendChild(variable.el );
   }
 
-  removeVariable(variableKey) {
-    this.menuEl.removeChild(this.variables[variableKey].el);
-    delete this.variables[variableKey];
+  removeVariable(variable) {
+    if (variable.requiredBy.size) {
+      for (const dependent of variable.requiredBy) {
+        dependent.el.classList.add("flash");
+        dependent.el.addEventListener("animationend", () => {
+          dependent.el.classList.remove("flash");
+        });
+      }
+    } else {
+      this.menuEl.removeChild(variable.el);
+      delete this.variables[variable.key];
+    }
   }
 
   nextKey() {
