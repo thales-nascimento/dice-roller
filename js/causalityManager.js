@@ -93,7 +93,7 @@ export default class CausalityManager {
         return;
       }
 
-      name = "@" + name;
+      name = "cslty-" + name;
       if (this.causalities[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.causalities[name].el);

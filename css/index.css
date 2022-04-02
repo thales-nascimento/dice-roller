@@ -21,6 +21,10 @@ body > fieldset:first-child {
 	flex-direction: column;
 }
 
+.allow-wrap {
+  flex-wrap: wrap;
+}
+
 .causality-key, .operator, .dice-key, .variable-key, .simple-rule-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
@@ -97,9 +101,6 @@ body > fieldset:first-child {
   }
 }
 
-#new-dice-face-weights {
-  flex-wrap: wrap;
-}
 #new-dice-presets button {
   margin: 0 4px;
 }
