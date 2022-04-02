@@ -3,7 +3,7 @@ import SimpleRuleManager from './simpleRuleManager.js';
 import VariableManager from './variableManager.js';
 import EffectManager from './effectManager.js';
 import CausalityManager from './causalityManager.js';
-import TableManager from './tableManager.js';
+import Table from './table.js';
 
 
 function start() {
@@ -30,7 +30,7 @@ function start() {
   const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleRuleManager, effectManager);
 
   const tableEl = document.querySelector("#table-top-level")
-  const tableManager = new TableManager(tableEl, diceManager, causalityManager);
+  const table = new Table(tableEl, diceManager, causalityManager);
 }
 
 window.addEventListener("load", function () {

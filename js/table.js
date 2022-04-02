@@ -1,4 +1,4 @@
-export default class TableManager {
+export default class Table {
   constructor(topLevelEl, diceManager, causalityManager) {
     this.topLevelEl = topLevelEl;
 
