@@ -8,7 +8,9 @@ export default class SimpleRuleManager {
   constructor(topLevelEl, simpleRuleCreatorEl, variableManager) {
     this.ruleIndex = 0;
     this.rules = {};
+
     this.topLevelEl = topLevelEl;
+    this.menuEl = topLevelEl.querySelector(".menu-list");
 
     this.simpleRuleCreatorEl = simpleRuleCreatorEl;
     this.operandBSelectionEl = simpleRuleCreatorEl.querySelector("#new-simple-rule-operand-b-selector");
@@ -16,7 +18,8 @@ export default class SimpleRuleManager {
     this.constantInputEl = simpleRuleCreatorEl.querySelector("#new-simple-rule-constant");
 
     this.variableManager = variableManager;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    variableManager.addChangeListener(() => this.refreshVariables());
+
     this.prepareAdderButton();
   }
 
@@ -26,6 +29,7 @@ export default class SimpleRuleManager {
       key: this.nextKey(),
       depends: new Set(),
       requiredBy: new Set(),
+      manager: this,
     };
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);

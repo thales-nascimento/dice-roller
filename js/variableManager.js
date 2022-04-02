@@ -16,6 +16,7 @@ export default class VariableManager {
   constructor(topLevelEl) {
     this.variableIndex = 0;
     this.variables = {};
+    this.changeListeners = [];
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
     this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
@@ -64,6 +65,7 @@ export default class VariableManager {
     } else {
       this.menuEl.removeChild(variable.el);
       delete this.variables[variable.key];
+      this.onVariableChange();
     }
   }
 
@@ -78,5 +80,15 @@ export default class VariableManager {
 
   getVariableByKey(key) {
     return this.variables[key];
+  }
+
+  addChangeListener(callback) {
+    this.changeListeners.push(callback);
+  }
+
+  onVariableChange() {
+    for (const cb of this.changeListeners) {
+      cb();
+    }
   }
 }
