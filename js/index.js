@@ -16,7 +16,7 @@ function start() {
 
   const simpleRuleEl = document.querySelector("#simple-rules-top-level");
   const simpleRuleCreatorEl = document.querySelector("#new-simple-rule");
-  const simpleRuleManager = new SimpleRuleManager(simpleRuleEl, simpleRuleCreatorEl, variableManager);
+  const simpleRuleManager = new SimpleRuleManager(simpleRuleEl, simpleRuleCreatorEl, diceManager, variableManager);
 }
 
 window.addEventListener("load", function () {

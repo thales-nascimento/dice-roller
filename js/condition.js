@@ -6,16 +6,13 @@ class Operator {
 }
 
 export const operators = {
-  gt: new Operator(">", (a, b) => a > b),
-  ge: new Operator("≥", (a, b) => a >= b),
-  eq: new Operator("=", (a, b) => a == b),
-  ne: new Operator("≠", (a, b) => a != b),
-  le: new Operator("≤", (a, b) => a <= b),
-  lt: new Operator("<", (a, b) => a < b),
+  ">": new Operator(">", (a, b) => a > b),
+  "≥": new Operator("≥", (a, b) => a >= b),
+  "=": new Operator("=", (a, b) => a == b),
+  "≠": new Operator("≠", (a, b) => a != b),
+  "≤": new Operator("≤", (a, b) => a <= b),
+  "<": new Operator("<", (a, b) => a < b),
 };
-for (const [k, v] of Object.entries(operators)) {
-  operators[v.text] = v;
-}
 
 export class Condition {
   constructor(operandAGetter, operation, operandBGetter) {

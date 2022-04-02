@@ -71,6 +71,14 @@ export default class DiceManager {
     return `#${this.diceIndex}`
   }
 
+  getDices() {
+    return Object.values(this.dices);
+  }
+
+  getDiceByKey(key) {
+    return this.dices[key];
+  }
+
   prepareAdderButton() {
     this.prepareFacesChange();
 

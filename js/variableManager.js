@@ -49,7 +49,7 @@ export default class VariableManager {
   }
 
   getVariables() {
-    return this.variables
+    return Object.values(this.variables);
   }
 
   getVariableByKey(key) {

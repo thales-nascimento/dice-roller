@@ -5,7 +5,7 @@ import { operators } from "./condition.js"
 const constantText = "const";
 
 export default class SimpleRuleManager {
-  constructor(topLevelEl, creatorEl, variableManager) {
+  constructor(topLevelEl, creatorEl, diceManager, variableManager) {
     this.rules = {};
 
     this.topLevelEl = topLevelEl;
@@ -15,6 +15,9 @@ export default class SimpleRuleManager {
     this.operandBSelectionEl = creatorEl.querySelector("#new-simple-rule-operand-b-selector");
     this.operandASelectionEl = creatorEl.querySelector("#new-simple-rule-operand-a-selector");
     this.constantInputEl = creatorEl.querySelector("#new-simple-rule-constant");
+
+    this.diceManager = diceManager;
+    diceManager.addChangeListener(() => this.refreshVariables());
 
     this.variableManager = variableManager;
     variableManager.addChangeListener(() => this.refreshVariables());
@@ -101,11 +104,12 @@ export default class SimpleRuleManager {
         return;
       }
 
-      const operandA = this.variableManager.getVariableByKey(operandAKey);
+      const operandA = this.diceManager.getDiceByKey(operandAKey) || this.variableManager.getVariableByKey(operandAKey);
       const operator = operators[operatorSelectionEl.value];
       let operandB;
       if (this.operandBSelectionEl.value !== constantText) {
-        operandB = this.variableManager.getVariableByKey(this.operandBSelectionEl.value);
+        const operandBKey = this.operandBSelectionEl.value;
+        operandB = this.diceManager.getDiceByKey(operandBKey) || this.variableManager.getVariableByKey(operandBKey);
       } else {
         operandB = this.constantInputEl.value;
       }
@@ -115,10 +119,11 @@ export default class SimpleRuleManager {
 
   refreshVariables() {
     const variables = this.variableManager.getVariables();
-    const variableOptionEls = Object.values(variables).map(v => makeOption({text: v.key, value: v.key}));
+    const dices = this.diceManager.getDices();
+    const optionEls = variables.concat(dices).map(v => makeOption({text: v.key, value: v.key}));
 
-    this.refreshOperandA(variableOptionEls);
-    this.refreshOperandB(variableOptionEls.map(v => v.cloneNode(true)));
+    this.refreshOperandA(optionEls);
+    this.refreshOperandB(optionEls.map(v => v.cloneNode(true)));
   }
 
   refreshOperandB(variableOptionEls) {
