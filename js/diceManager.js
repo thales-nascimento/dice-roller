@@ -2,7 +2,7 @@ import { makeFlexRow, makeButton, makeLabel, makeNumberInput } from "./domUtils.
 import openConfirmator from "./confirmator.js";
 
 export default class DiceManager {
-  constructor(topLevelEl, diceCreatorEl) {
+  constructor(topLevelEl, creatorEl) {
     this.diceIndex = 0;
     this.dices = {};
     this.changeListeners = [];
@@ -10,9 +10,9 @@ export default class DiceManager {
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
-    this.diceCreatorEl = diceCreatorEl;
-    this.facesEl = diceCreatorEl.querySelector("#new-dice-faces");
-    this.faceWeightsEl = diceCreatorEl.querySelector("#new-dice-face-weights");
+    this.creatorEl = creatorEl;
+    this.facesEl = creatorEl.querySelector("#new-dice-faces");
+    this.faceWeightsEl = creatorEl.querySelector("#new-dice-face-weights");
 
     this.prepareAdderButton();
   }
@@ -68,10 +68,15 @@ export default class DiceManager {
     }
   }
 
+  nextKey() {
+    this.diceIndex += 1;
+    return `#${this.diceIndex}`
+  }
+
   prepareAdderButton() {
     this.prepareFacesChange();
 
-    const addNewButtonEl = this.diceCreatorEl.querySelector("#new-dice-create");
+    const addNewButtonEl = this.creatorEl.querySelector("#new-dice-create");
     addNewButtonEl.addEventListener("click", () => {
       const weights = [];
       for (const weightEl of this.faceWeightsEl.childNodes) {
@@ -80,11 +85,6 @@ export default class DiceManager {
       }
       this.generateRow(weights);
     });
-  }
-
-  nextKey() {
-    this.diceIndex += 1;
-    return `#${this.diceIndex}`
   }
 
   prepareFacesChange() {
@@ -107,7 +107,7 @@ export default class DiceManager {
   }
 
   preparePresets() {
-    const presetsEl = this.diceCreatorEl.querySelector("#new-dice-presets");
+    const presetsEl = this.creatorEl.querySelector("#new-dice-presets");
     for (const presetEl of presetsEl.childNodes) {
       presetEl.addEventListener("click", () => {
         this.facesEl.value = presetEl.dataset.faces;

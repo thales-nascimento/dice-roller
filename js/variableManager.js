@@ -2,17 +2,20 @@ import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
 export default class VariableManager {
-  constructor(topLevelEl) {
+  constructor(topLevelEl, creatorEl) {
     this.variableIndex = 0;
     this.variables = {};
     this.changeListeners = [];
 
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
-    this.addNewButtonEl = topLevelEl.querySelector(".menu-adder-button")
+
+    this.creatorEl = creatorEl;
+
+    this.prepareAdderButton();
   }
 
-  generateMenuRow(name) {
+  generateRow(name) {
     const variable = {
       key: this.nextKey(),
       name: name,
@@ -71,5 +74,16 @@ export default class VariableManager {
     for (const cb of this.changeListeners) {
       cb();
     }
+  }
+
+  prepareAdderButton() {
+    const addNewButtonEl = this.creatorEl.querySelector("#new-variable-create");
+    const nameEl = this.creatorEl.querySelector("#new-variable-name");
+    addNewButtonEl.addEventListener("click", () => {
+      const name = nameEl.value;
+      if (name !== "") {
+        this.generateRow(nameEl.value);
+      }
+    });
   }
 }

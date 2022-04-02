@@ -11,7 +11,8 @@ function start() {
   const diceManager = new Dice(diceEl, diceCreatorEl);
 
   const variableEl = document.querySelector("#variables-top-level");
-  const variableManager = new VariableManager(variableEl);
+  const variableCreatorEl = document.querySelector("#new-variable");
+  const variableManager = new VariableManager(variableEl, variableCreatorEl);
 
   const simpleRuleEl = document.querySelector("#simple-rules-top-level");
   const simpleRuleCreatorEl = document.querySelector("#new-simple-rule");

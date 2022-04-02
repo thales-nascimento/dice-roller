@@ -1,21 +1,21 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
-import { operators, Condition } from "./condition.js"
+import { operators } from "./condition.js"
 
 const constantText = "const";
 
 export default class SimpleRuleManager {
-  constructor(topLevelEl, simpleRuleCreatorEl, variableManager) {
+  constructor(topLevelEl, creatorEl, variableManager) {
     this.ruleIndex = 0;
     this.rules = {};
 
     this.topLevelEl = topLevelEl;
     this.menuEl = topLevelEl.querySelector(".menu-list");
 
-    this.simpleRuleCreatorEl = simpleRuleCreatorEl;
-    this.operandBSelectionEl = simpleRuleCreatorEl.querySelector("#new-simple-rule-operand-b-selector");
-    this.operandASelectionEl = simpleRuleCreatorEl.querySelector("#new-simple-rule-operand-a-selector");
-    this.constantInputEl = simpleRuleCreatorEl.querySelector("#new-simple-rule-constant");
+    this.creatorEl = creatorEl;
+    this.operandBSelectionEl = creatorEl.querySelector("#new-simple-rule-operand-b-selector");
+    this.operandASelectionEl = creatorEl.querySelector("#new-simple-rule-operand-a-selector");
+    this.constantInputEl = creatorEl.querySelector("#new-simple-rule-constant");
 
     this.variableManager = variableManager;
     variableManager.addChangeListener(() => this.refreshVariables());
@@ -77,13 +77,13 @@ export default class SimpleRuleManager {
   }
 
   prepareAdderButton() {
-    const operatorSelectionEl = this.simpleRuleCreatorEl.querySelector("#new-simple-rule-operator-selector");
+    const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-rule-operator-selector");
     const operatorOptionEls = Object.values(operators).map(op => makeOption({text: op.text, value: op.text}));
     for (const opEl of operatorOptionEls) {
       operatorSelectionEl.appendChild(opEl);
     }
     this.refreshVariables();
-    const addNewButtonEl = this.simpleRuleCreatorEl.querySelector("#new-simple-rule-create");
+    const addNewButtonEl = this.creatorEl.querySelector("#new-simple-rule-create");
     addNewButtonEl.addEventListener("click", () => {
       const operandA = this.variableManager.getVariableByKey(this.operandASelectionEl.value);
       const operator = operators[operatorSelectionEl.value];
