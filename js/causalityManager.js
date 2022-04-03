@@ -104,6 +104,6 @@ export default class CausalityManager extends Manager {
 
   check() {
     const causalities = this.getAllManaged();
-    return causalities.filter(causality => causality.cause.condition.check());
+    return causalities.filter(causality => causality.cause.check());
   }
 }

@@ -21,7 +21,7 @@ export default class VariableManager extends Manager {
     };
 
     const keyEl = makeLabel({text: variable.key, classes: ["standard-row", "variable-key"]});
-    const inputEl = makeNumberInput({min: 0, step: 1, value: 1, classes: ["standard-row", "variable-input"]});
+    const inputEl = makeNumberInput({min: 0, step: 1, value: 1, classes: ["standard-row", "number-input", "variable-input"]});
     const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
     variable.el = makeFlexRow({children: [keyEl, inputEl, removeButtonEl]});
     inputEl.addEventListener("change", (evt) => {
@@ -55,3 +55,6 @@ export default class VariableManager extends Manager {
     });
   }
 }
+
+//TODO(thales) variavel de soma
+//TODO(thales) variavel de média

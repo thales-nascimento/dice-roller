@@ -103,6 +103,10 @@ export default class DiceManager extends Manager {
       });
     }
   }
+
+  getDiceValues() {
+    return this.getAllManaged().map(d => d.value);
+  }
 }
 
 

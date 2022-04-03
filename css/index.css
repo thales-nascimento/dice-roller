@@ -45,6 +45,17 @@ body > fieldset:first-child {
   text-overflow: ellipsis;
 }
 
+.disabled-hidden:disabled {
+  display: none;
+}
+
+.number-input {
+  font-weight: bolder;
+  width: 5em;
+  text-align: center;
+  color: black;
+}
+
 .action-button {
   width: 20em;
 }
@@ -100,10 +111,6 @@ body > fieldset:first-child {
   width: 10em;
 }
 .variable-input {
-  font-weight: bolder;
-  width: 5em;
-  text-align: center;
-  color: black;
   border-color: darkblue;
   border-width: 4px;
 }

@@ -18,12 +18,13 @@ export default class ComplexCauseManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(operandA, operator, operandB, bIsConstant) {
+  generateRow(operandA, operator, operandB) {
     const cause = {
       name: `${operandA.key} ${operator.text} ${operandB.key}`,
       depends: new Set(),
       requiredBy: new Set(),
-      condition: new Condition(operator, () => operandA.condition.check(), () => operandB.condition.check()),
+      condition: new Condition(operator, () => operandA.check(), () => operandB.check()),
+      check: () => cause.check(),
     };
 
     if (!this.validateDuplicateManagedName(cause.name)) {

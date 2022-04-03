@@ -94,3 +94,7 @@ export function warmup(evtName, el) {
   const event = new Event(evtName);
   el.dispatchEvent(event);
 }
+
+export function addErrorClass(el) {
+  el.classList.add("input-error");
+}

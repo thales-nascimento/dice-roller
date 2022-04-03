@@ -1,12 +1,21 @@
-import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
-import { numberOperators, Condition } from "./condition.js"
+import { makeFlexRow, makeButton, makeLabel, makeOption, warmup, addErrorClass } from "./domUtils.js";
+import { numberOperators, Condition, groupMode } from "./condition.js"
 import Manager, { validateInputValue } from "./manager.js";
+import showToast from "./toast.js";
 
 const constantText = "const";
+
+const premiseType = {
+  dice: Symbol("dice"),
+  constant: Symbol("const"),
+  variable: Symbol("var"),
+  special: Symbol("special"),
+}
 
 export default class SimpleCauseManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
     super("∵");
+
     this.topLevelEl = topLevelEl;
     this.managedListEl = topLevelEl.querySelector(".list");
 
@@ -14,6 +23,7 @@ export default class SimpleCauseManager extends Manager {
     this.operandBSelectionEl = creatorEl.querySelector("#new-simple-cause-operand-b-selector");
     this.operandASelectionEl = creatorEl.querySelector("#new-simple-cause-operand-a-selector");
     this.constantInputEl = creatorEl.querySelector("#new-simple-cause-constant");
+    this.nDicesInputEl = creatorEl.querySelector("#new-simple-cause-n-dices");
 
     this.diceManager = diceManager;
     diceManager.addChangeListener(() => this.refreshVariables());
@@ -21,15 +31,37 @@ export default class SimpleCauseManager extends Manager {
     this.variableManager = variableManager;
     variableManager.addChangeListener(() => this.refreshVariables());
 
+    this.specialCauses = {
+      anyDice: {
+        key: "anyDice",
+        name: "any dice",
+        requiredBy: new Set(),
+        getValue: () => ({groupMode: groupMode.any, values: this.diceManager.getDiceValues()}),
+      },
+      nDices: {
+        key: "nDices",
+        name: "n dices",
+        requiredBy: new Set(),
+        getValue: () => ({groupMode: groupMode.n, values: this.diceManager.getDiceValues(), n: Number.parseInt(this.nDicesInputEl.value)}),
+      },
+      allDices: {
+        key: "allDices",
+        name: "all dices",
+        requiredBy: new Set(),
+        getValue: () => ({groupMode: groupMode.all, values: this.diceManager.getDiceValues()}),
+      },
+    };
+
     this.prepareAdderButton();
   }
 
-  generateRow(operandA, operator, operandB, bIsConstant) {
+  generateRow(operator, operandA, aType, operandB, bType) {
     const cause = {
-      name: `${operandA.key} ${operator.text} ${bIsConstant ? operandB : operandB.key}`,
+      name: `${operandA.key} ${operator.text} ${bType == premiseType.constant ? operandB : operandB.key}`,
+      condition: new Condition(operator, generateValueGetter(operandA, aType), generateValueGetter(operandB, bType)),
       depends: new Set(),
       requiredBy: new Set(),
-      condition: new Condition(operator, () => operandA.value, bIsConstant ? () => operandB : () => operandB.value),
+      check: () => cause.condition.check(),
     };
 
     if (!this.validateDuplicateManagedName(cause.name)) {
@@ -38,7 +70,7 @@ export default class SimpleCauseManager extends Manager {
     cause.key = this.nextKey();
     cause.depends.add(operandA);
     operandA.requiredBy.add(cause);
-    if (!bIsConstant) {
+    if (bType !== premiseType.constant) {
       cause.depends.add(operandB);
       operandB.requiredBy.add(cause);
     }
@@ -68,7 +100,10 @@ export default class SimpleCauseManager extends Manager {
     }
 
     operatorSelectionEl.addEventListener("change", removeAllinputErros);
-    this.operandASelectionEl.addEventListener("change", removeAllinputErros);
+    this.operandASelectionEl.addEventListener("change", (evt) => {
+      removeAllinputErros(evt);
+      this.nDicesInputEl.disabled = evt.target.value !== this.specialCauses.nDices.key;
+    });
     this.constantInputEl.addEventListener("change", removeAllinputErros);
     this.operandBSelectionEl.addEventListener("change", (evt) => {
       this.constantInputEl.disabled = evt.target.value !== constantText;
@@ -81,48 +116,26 @@ export default class SimpleCauseManager extends Manager {
         return;
       }
 
-      const operandAKey = this.operandASelectionEl.value;
-      let operandA = this.diceManager.getManagedByKey(operandAKey)
-      const aIsDice = operandA !== undefined;
-      if (!aIsDice) {
-        operandA = this.variableManager.getManagedByKey(operandAKey);
-      }
-      const operator = numberOperators[operatorSelectionEl.value];
-      let operandB;
-      const bIsConstant = this.operandBSelectionEl.value === constantText;
-      if (bIsConstant) {
-        const constant = this.constantInputEl.value;
-        if (aIsDice) {
-          if (constant > operandA.faces || constant < 1) {
-            this.constantInputEl.classList.add("input-error");
-            return;
-          } else if (constant == operandA.faces && operator == numberOperators[">"]) {
-            operatorSelectionEl.classList.add("input-error");
-            this.constantInputEl.classList.add("input-error");
-            return;
-          } else if (constant == 1 && operator == numberOperators["<"]) {
-            operatorSelectionEl.classList.add("input-error");
-            this.constantInputEl.classList.add("input-error");
-            return;
-          }
+      const [ operandA, aType ] = this.getOperandAndType(this.operandASelectionEl);
+      const [ operandB, bType ] = this.getOperandAndType(this.operandBSelectionEl);
 
-        }
-        operandB = constant;
-      } else {
-        const operandBKey = this.operandBSelectionEl.value;
-        operandB = this.diceManager.getManagedByKey(operandBKey) || this.variableManager.getManagedByKey(operandBKey);
+      const operator = numberOperators[operatorSelectionEl.value];
+      if (!this.validateOperation(operator, operandA, aType, operandB, bType)) {
+        return;
       }
-      this.generateRow(operandA, operator, operandB, bIsConstant);
+      this.generateRow(operator, operandA, aType, operandB, bType);
     });
   }
 
   refreshVariables() {
     const variables = this.variableManager.getAllManaged();
     const dices = this.diceManager.getAllManaged();
-    const optionEls = variables.concat(dices).map(v => makeOption({text: v.key, value: v.key}));
+    let optionEls = variables.concat(dices).map(o => makeOption({text: o.key, value: o.key}));
+    this.refreshOperandB(optionEls);
 
+    const specialEls = Object.values(this.specialCauses).map(s => makeOption({text: s.name, value: s.key}));
+    optionEls = optionEls.map(o => o.cloneNode(true)).concat(specialEls);
     this.refreshOperandA(optionEls);
-    this.refreshOperandB(optionEls.map(v => v.cloneNode(true)));
   }
 
   refreshOperandB(optionEls) {
@@ -142,7 +155,60 @@ export default class SimpleCauseManager extends Manager {
     }
     warmup("change", this.operandASelectionEl);
   }
+
+  getOperandAndType(operandEl) {
+    const operandKey = operandEl.value;
+    if (operandKey === constantText) {
+      return [ this.constantInputEl.value, premiseType.constant ];
+    }
+
+    let operand = this.diceManager.getManagedByKey(operandKey)
+    let type = premiseType.dice;
+    if (operand === undefined) {
+      operand = this.variableManager.getManagedByKey(operandKey)
+      type = premiseType.variable;
+    }
+    if (operand === undefined) {
+      operand = this.specialCauses[operandKey];
+      type = premiseType.special;
+    }
+    return [ operand, type ];
+  }
+
+  validateOperation(operator, operandA, aType, operandB, bType) {
+    if (aType === premiseType.dice && bType === premiseType.constant) {
+      const constant = operandB;
+      if (constant > operandA.faces) {
+        addErrorClass(this.constantInputEl);
+        showToast("constant is greater than number of faces");
+        return false;
+      } else if (constant === operandA.faces && operator === numberOperators[">"]) {
+        addErrorClass(this.operatorSelectionEl);
+        addErrorClass(this.constantInputEl);
+        showToast(`dice has ${operandA.faces} faces and will never be greater than ${constant}`);
+        return false;
+      } else if (constant === 1 && operator === numberOperators["<"]) {
+        addErrorClass(this.operatorSelectionEl);
+        addErrorClass(this.constantInputEl);
+        showToast(`dice will never roll less than ${constant}`);
+        return false;
+      }
+    }
+    return true;
+    /*TODO(thales) melhorar verificaoes de condicao*/
+  }
 }
+
+const generateValueGetter = (operand, type) => () => {
+  switch (type) {
+    case premiseType.constant:
+      return operand;
+    case premiseType.special:
+      return operand.getValue();
+    default:
+      return operand.value;
+  }
+};
 
 function fillOperators(operatorSelectionEl) {
   const operatorOptionEls = Object.values(numberOperators).map(op => makeOption({text: op.text, value: op.text}));
