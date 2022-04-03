@@ -1,5 +1,6 @@
 import { flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
+import showToast from "./toast.js";
 
 export default class Manager {
   constructor(keyPrefix) {
@@ -37,6 +38,7 @@ export default class Manager {
       for (const dependent of managedInstance.requiredBy) {
         flash(dependent.el);
       }
+      showToast("Remove dependencies first.");
     } else {
       for (const dep of managedInstance.depends) {
         dep.requiredBy.delete(managedInstance);
@@ -64,6 +66,7 @@ export default class Manager {
         inputEl.classList.add("input-error");
       }
       flash(this.managed[key].el);
+      showToast("Duplicated key.");
       return false;
     }
     return true;
@@ -73,6 +76,7 @@ export default class Manager {
     for (const m of this.getAllManaged()) {
       if (m.name === name) {
         flash(m.el);
+        showToast("Duplicated name.");
         return false;
       }
     }
