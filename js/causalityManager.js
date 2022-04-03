@@ -3,7 +3,7 @@ import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class CausalityManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleRuleManager, effectManger) {
-    super();
+    super("→ ");
     this.topLevelEl = topLevelEl;
     this.mangedListEl = topLevelEl.querySelector(".list");
 
@@ -20,52 +20,46 @@ export default class CausalityManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(name, cause, effect) {
+  generateRow(cause, effect) {
     const causality = {
-      key: name,
+      name: `${cause.key} → ${effect.key}`,
       tooltip: `if ${cause.key} then ${effect.key}`,
       cause,
       effect,
       depends: new Set(),
       requiredBy: new Set(),
     };
+
+    if (!this.validateDuplicateManagedName(causality.name)) {
+      return;
+    }
+    causality.key = this.nextKey();
     causality.depends.add(cause);
     cause.requiredBy.add(causality);
     causality.depends.add(effect);
     effect.requiredBy.add(causality);
 
     const keyEl = makeLabel({text: causality.key, tooltip: causality.tooltip, classes: ["causality-key"]});
+    const nameEl = makeLabel({text: causality.name, tooltip: causality.tooltip, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
-    causality.el = makeFlexRow({children: [keyEl, removeButtonEl]});
+    causality.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, causality);
 
     this.managed[causality.key] = causality;
     this.mangedListEl.appendChild(causality.el);
-    console.log(this.managed);
   }
 
   prepareAdderButton() {
-    const nameEl = this.creatorEl.querySelector("#new-causality-name");
     const effectSelectionEl = this.creatorEl.querySelector("#new-causality-effect");
     const addNewButtonEl = this.creatorEl.querySelector("#new-causality-create");
 
-    nameEl.addEventListener("input", removeInputError);
     this.causeSelectionEl.addEventListener("change", removeInputError);
 
     this.refreshCauses();
     this.refreshEffects();
 
     addNewButtonEl.addEventListener("click", () => {
-      if (!validateInputValue(nameEl)) {
-        return;
-      }
-
-      const name = "cfx-" + nameEl.value;
-      if (!this.validateDuplicateManagedKey(name, nameEl)) {
-        return;
-      }
-
       if (!validateInputValue(this.causeSelectionEl)) {
         return;
       }
@@ -77,7 +71,7 @@ export default class CausalityManager extends Manager {
       const cause = this.simpleRuleManager.getManagedByKey(this.causeSelectionEl.value);
       const effect = this.effectManager.getManagedByKey(effectSelectionEl.value);
 
-      this.generateRow(name, cause, effect);
+      this.generateRow(cause, effect);
     });
   }
 
@@ -108,7 +102,3 @@ export default class CausalityManager extends Manager {
     return causalities.filter(causality => causality.cause.condition.check());
   }
 }
-
-/*TODO(thales) não permitir adicionar duplicatas */;
-/*TODO(thales) trocar managed por Set */
-/*TODO(thales) trocar nome por cause => effect */

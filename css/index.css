@@ -46,7 +46,7 @@ body > fieldset:first-child {
 }
 .menu-label {
   background-color: olivedrab;
-  width: 4em;
+  width: 10em;
   padding: 0 8px;
 }
 .variable-key {
@@ -78,8 +78,8 @@ body > fieldset:first-child {
 }
 .causality-key {
   padding: 0 3px;
-  background-color: forestgreen;
-  width: 10em;
+  background-color: aqua;
+  width: 2em;
 }
 .menu-remove-button {
   background-color: crimson;

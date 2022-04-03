@@ -3,7 +3,7 @@ import Manager from "./manager.js";
 
 export default class DiceManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    super("⚂");
+    super("#");
     this.diceIndex = 0;
 
     this.topLevelEl = topLevelEl;

@@ -6,7 +6,7 @@ const constantText = "const";
 
 export default class SimpleRuleManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
-    super("→");
+    super("%");
     this.topLevelEl = topLevelEl;
     this.mangedListEl = topLevelEl.querySelector(".list");
 

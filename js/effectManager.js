@@ -42,7 +42,7 @@ export default class EffectManager extends Manager {
         return;
       }
 
-      name = "eff-" + name;
+      name = "★" + name;
       if (this.managed[name] !== undefined) {
         nameEl.classList.add("input-error");
         flash(this.managed[name].el);

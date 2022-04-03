@@ -40,7 +40,7 @@ export default class VariableManager extends Manager {
         return;
       }
 
-      const name = "var-" + nameEl.value;
+      const name = "$" + nameEl.value;
       if (!this.validateDuplicateManagedKey(name, nameEl)) {
         return;
       }
