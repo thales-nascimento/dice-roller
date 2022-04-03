@@ -1,6 +1,7 @@
-import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, makeOption, warmup, addErrorClass } from "./domUtils.js";
 import { propositionOperators, Condition } from "./condition.js"
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
+import showToast from "./toast.js";
 
 export default class ComplexCauseManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleCauseManager) {
@@ -54,8 +55,12 @@ export default class ComplexCauseManager extends Manager {
 
     fillOperators(operatorSelectionEl);
 
-    this.premiseASelectionEl.addEventListener("change", removeInputError);
-    this.premiseBSelectionEl.addEventListener("change", removeInputError);
+    const removeAllinputErros = () => {
+      this.premiseASelectionEl.classList.remove("input-error");
+      this.premiseBSelectionEl.classList.remove("input-error");
+    }
+    this.premiseASelectionEl.addEventListener("change", removeAllinputErros);
+    this.premiseBSelectionEl.addEventListener("change", removeAllinputErros);
 
     this.refreshCauses();
 
@@ -68,8 +73,15 @@ export default class ComplexCauseManager extends Manager {
       }
 
       const premiseAKey = this.premiseASelectionEl.value;
-      const premiseA = this.simpleCauseManager.getManagedByKey(premiseAKey)
       const premiseBKey = this.premiseBSelectionEl.value;
+      if (premiseAKey === premiseBKey) {
+        addErrorClass(this.premiseASelectionEl);
+        addErrorClass(this.premiseBSelectionEl);
+        showToast(`Premises are the same`);
+        return false;
+      }
+
+      const premiseA = this.simpleCauseManager.getManagedByKey(premiseAKey)
       const premiseB = this.simpleCauseManager.getManagedByKey(premiseBKey)
       const operator = propositionOperators[operatorSelectionEl.value];
 
