@@ -24,28 +24,25 @@ export default class SimpleRuleManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(name, operandA, operator, operandB) {
-    let operandBGetter;
+  generateRow(operandA, operator, operandB, bIsConstant) {
     const rule = {
-      key: name,
-      tooltip: `${operandA.key} ${operator.text} `,
+      key: `${operandA.key} ${operator.text} ${bIsConstant ? operandB : operandB.key}`,
       depends: new Set(),
       requiredBy: new Set(),
+      condition: new Condition(operator, () => operandA.value, bIsConstant ? () => operandB : () => operandB.value),
     };
+
+    if (!this.validateDuplicateManagedKey(rule.key)) {
+      return;
+    }
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);
-
-    if (Number.parseFloat(operandB)) {
-      rule.tooltip += operandB.toString();
-      operandBGetter = () => operandB;
-    } else {
-      rule.tooltip += operandB.key;
+    if (!bIsConstant) {
       rule.depends.add(operandB);
       operandB.requiredBy.add(rule);
-      operandBGetter = () => operandB.value;
     }
-    rule.condition = new Condition(operator, () => operandA.value, operandBGetter);
-    const keyEl = makeLabel({text: rule.key, tooltip: rule.tooltip, classes: ["simple-cause-key"]});
+
+    const keyEl = makeLabel({text: rule.key, classes: ["simple-cause-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
     rule.el = makeFlexRow({children: [keyEl, removeButtonEl]});
@@ -57,27 +54,16 @@ export default class SimpleRuleManager extends Manager {
   }
 
   prepareAdderButton() {
-    const nameEl = this.creatorEl.querySelector("#new-simple-cause-name");
     const operatorSelectionEl = this.creatorEl.querySelector("#new-simple-cause-operator-selector");
     const addNewButtonEl = this.creatorEl.querySelector("#new-simple-cause-create");
 
     fillOperators(operatorSelectionEl);
 
-    nameEl.addEventListener("input", removeInputError);
     this.operandASelectionEl.addEventListener("change", removeInputError);
 
     this.refreshVariables();
 
     addNewButtonEl.addEventListener("click", () => {
-      if (!validateInputValue(nameEl)) {
-        return;
-      }
-
-      const name = "cse-" + nameEl.value;
-      if (!this.validateDuplicateManagedKey(name, nameEl)) {
-        return;
-      }
-
       if (!validateInputValue(this.operandASelectionEl)) {
         return;
       }
@@ -86,14 +72,15 @@ export default class SimpleRuleManager extends Manager {
       const operandA = this.diceManager.getManagedByKey(operandAKey) || this.variableManager.getManagedByKey(operandAKey);
       const operator = operators[operatorSelectionEl.value];
       let operandB;
-      if (this.operandBSelectionEl.value !== constantText) {
-        const operandBKey = this.operandBSelectionEl.value;
-        operandB = this.diceManager.getManagedByKey(operandBKey) || this.variableManager.getManagedByKey(operandBKey);
-      } else {
+      let bIsConstant = this.operandBSelectionEl.value === constantText;
+      if (bIsConstant) {
         //TODO(thales) check if constant makes sense against dice
         operandB = this.constantInputEl.value;
+      } else {
+        const operandBKey = this.operandBSelectionEl.value;
+        operandB = this.diceManager.getManagedByKey(operandBKey) || this.variableManager.getManagedByKey(operandBKey);
       }
-      this.generateRow(name, operandA, operator, operandB);
+      this.generateRow(operandA, operator, operandB, bIsConstant);
     });
   }
 
@@ -135,5 +122,4 @@ function fillOperators(operatorSelectionEl) {
   }
 }
 
-/*TODO(thales) não permitir adicionar duplicatas */;
 /*TODO(thales) renomear rule => condition */

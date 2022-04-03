@@ -53,7 +53,9 @@ export default class Manager {
 
   validateDuplicateManagedKey(key, inputEl) {
     if (this.managed[key] !== undefined) {
-      inputEl.classList.add("input-error");
+      if (inputEl !== undefined) {
+        inputEl.classList.add("input-error");
+      }
       flash(this.managed[key].el);
       return false;
     }
