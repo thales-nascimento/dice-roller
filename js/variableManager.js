@@ -24,7 +24,6 @@ export default class VariableManager extends Manager {
   }
 
   refreshFixedVariables() {
-    console.log("refresh");
     const diceValues = this.diceManager.getDiceValues();
 
     const sumVariable = this.managed[sumVariableName];

@@ -20,16 +20,16 @@ export default class SimpleCauseManager extends Manager {
     this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
-    this.operandBSelectionEl = creatorEl.querySelector("#new-simple-cause-operand-b-selector");
-    this.operandASelectionEl = creatorEl.querySelector("#new-simple-cause-operand-a-selector");
+    this.premiseBSelectionEl = creatorEl.querySelector("#new-simple-cause-premise-b-selector");
+    this.premiseASelectionEl = creatorEl.querySelector("#new-simple-cause-premise-a-selector");
     this.constantInputEl = creatorEl.querySelector("#new-simple-cause-constant");
     this.nDicesInputEl = creatorEl.querySelector("#new-simple-cause-n-dices");
 
     this.diceManager = diceManager;
-    diceManager.addChangeListener(() => this.refreshOperands());
+    diceManager.addChangeListener(() => this.refreshPremises());
 
     this.variableManager = variableManager;
-    variableManager.addChangeListener(() => this.refreshOperands());
+    variableManager.addChangeListener(() => this.refreshPremises());
 
     this.specialCauses = {
       anyDice: {
@@ -55,10 +55,10 @@ export default class SimpleCauseManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(operator, operandA, aType, operandB, bType) {
+  generateRow(operator, premiseA, aType, premiseB, bType) {
     const cause = {
-      name: `${operandA.key} ${operator.text} ${bType == premiseType.constant ? operandB : operandB.key}`,
-      condition: new Condition(operator, generateValueGetter(operandA, aType), generateValueGetter(operandB, bType)),
+      name: `${premiseA.key} ${operator.text} ${bType == premiseType.constant ? premiseB : premiseB.key}`,
+      condition: new Condition(operator, generateValueGetter(premiseA, aType), generateValueGetter(premiseB, bType)),
       depends: new Set(),
       requiredBy: new Set(),
       check: () => cause.condition.check(),
@@ -68,11 +68,11 @@ export default class SimpleCauseManager extends Manager {
       return;
     }
     cause.key = this.nextKey();
-    cause.depends.add(operandA);
-    operandA.requiredBy.add(cause);
+    cause.depends.add(premiseA);
+    premiseA.requiredBy.add(cause);
     if (bType !== premiseType.constant) {
-      cause.depends.add(operandB);
-      operandB.requiredBy.add(cause);
+      cause.depends.add(premiseB);
+      premiseB.requiredBy.add(cause);
     }
 
     const keyEl = makeLabel({text: cause.key, classes: ["standard-row", "simple-cause-key"]});
@@ -95,97 +95,97 @@ export default class SimpleCauseManager extends Manager {
 
     const removeAllinputErros = () => {
       operatorSelectionEl.classList.remove("input-error");
-      this.operandASelectionEl.classList.remove("input-error");
+      this.premiseASelectionEl.classList.remove("input-error");
       this.constantInputEl.classList.remove("input-error");
     }
 
     operatorSelectionEl.addEventListener("change", removeAllinputErros);
-    this.operandASelectionEl.addEventListener("change", (evt) => {
+    this.premiseASelectionEl.addEventListener("change", (evt) => {
       removeAllinputErros(evt);
       this.nDicesInputEl.disabled = evt.target.value !== this.specialCauses.nDices.key;
     });
     this.constantInputEl.addEventListener("change", removeAllinputErros);
-    this.operandBSelectionEl.addEventListener("change", (evt) => {
+    this.premiseBSelectionEl.addEventListener("change", (evt) => {
       this.constantInputEl.disabled = evt.target.value !== constantText;
     });
 
-    this.refreshOperands();
+    this.refreshPremises();
 
     addNewButtonEl.addEventListener("click", () => {
-      if (!validateInputValue(this.operandASelectionEl)) {
+      if (!validateInputValue(this.premiseASelectionEl)) {
         return;
       }
 
-      const [ operandA, aType ] = this.getOperandAndType(this.operandASelectionEl);
-      const [ operandB, bType ] = this.getOperandAndType(this.operandBSelectionEl);
+      const [ premiseA, aType ] = this.getPremiseAndType(this.premiseASelectionEl);
+      const [ premiseB, bType ] = this.getPremiseAndType(this.premiseBSelectionEl);
 
       const operator = numberOperators[operatorSelectionEl.value];
-      if (!this.validateOperation(operator, operandA, aType, operandB, bType)) {
+      if (!this.validateOperation(operator, premiseA, aType, premiseB, bType)) {
         return;
       }
-      this.generateRow(operator, operandA, aType, operandB, bType);
+      this.generateRow(operator, premiseA, aType, premiseB, bType);
     });
   }
 
-  refreshOperands() {
+  refreshPremises() {
     const variables = this.variableManager.getAllManaged();
     const dices = this.diceManager.getAllManaged();
     let optionEls = variables.concat(dices).map(o => makeOption({text: o.key, value: o.key}));
-    this.refreshOperandB(optionEls);
+    this.refreshPremiseB(optionEls);
 
     const specialEls = Object.values(this.specialCauses).map(s => makeOption({text: s.name, value: s.key}));
     optionEls = optionEls.map(o => o.cloneNode(true)).concat(specialEls);
-    this.refreshOperandA(optionEls);
+    this.refreshPremiseA(optionEls);
   }
 
-  refreshOperandB(optionEls) {
-    this.operandBSelectionEl.innerHTML = "";
+  refreshPremiseB(optionEls) {
+    this.premiseBSelectionEl.innerHTML = "";
     const constantOptionEl = makeOption({text: constantText, value: constantText});
-    this.operandBSelectionEl.appendChild(constantOptionEl);
+    this.premiseBSelectionEl.appendChild(constantOptionEl);
     for (const optionEl of optionEls) {
-      this.operandBSelectionEl.appendChild(optionEl);
+      this.premiseBSelectionEl.appendChild(optionEl);
     }
-    warmup("change", this.operandBSelectionEl);
+    warmup("change", this.premiseBSelectionEl);
   }
 
-  refreshOperandA(optionEls) {
-    this.operandASelectionEl.innerHTML = "";
+  refreshPremiseA(optionEls) {
+    this.premiseASelectionEl.innerHTML = "";
     for (const optionEl of optionEls) {
-      this.operandASelectionEl.appendChild(optionEl);
+      this.premiseASelectionEl.appendChild(optionEl);
     }
-    warmup("change", this.operandASelectionEl);
+    warmup("change", this.premiseASelectionEl);
   }
 
-  getOperandAndType(operandEl) {
-    const operandKey = operandEl.value;
-    if (operandKey === constantText) {
+  getPremiseAndType(premiseEl) {
+    const premiseKey = premiseEl.value;
+    if (premiseKey === constantText) {
       return [ this.constantInputEl.value, premiseType.constant ];
     }
 
-    let operand = this.diceManager.getManagedByKey(operandKey)
+    let premise = this.diceManager.getManagedByKey(premiseKey)
     let type = premiseType.dice;
-    if (operand === undefined) {
-      operand = this.variableManager.getManagedByKey(operandKey)
+    if (premise === undefined) {
+      premise = this.variableManager.getManagedByKey(premiseKey)
       type = premiseType.variable;
     }
-    if (operand === undefined) {
-      operand = this.specialCauses[operandKey];
+    if (premise === undefined) {
+      premise = this.specialCauses[premiseKey];
       type = premiseType.special;
     }
-    return [ operand, type ];
+    return [ premise, type ];
   }
 
-  validateOperation(operator, operandA, aType, operandB, bType) {
+  validateOperation(operator, premiseA, aType, premiseB, bType) {
     if (aType === premiseType.dice && bType === premiseType.constant) {
-      const constant = operandB;
-      if (constant > operandA.faces) {
+      const constant = premiseB;
+      if (constant > premiseA.faces) {
         addErrorClass(this.constantInputEl);
         showToast("constant is greater than number of faces");
         return false;
-      } else if (constant === operandA.faces && operator === numberOperators[">"]) {
+      } else if (constant === premiseA.faces && operator === numberOperators[">"]) {
         addErrorClass(this.operatorSelectionEl);
         addErrorClass(this.constantInputEl);
-        showToast(`dice has ${operandA.faces} faces and will never be greater than ${constant}`);
+        showToast(`dice has ${premiseA.faces} faces and will never be greater than ${constant}`);
         return false;
       } else if (constant === 1 && operator === numberOperators["<"]) {
         addErrorClass(this.operatorSelectionEl);
@@ -199,14 +199,14 @@ export default class SimpleCauseManager extends Manager {
   }
 }
 
-const generateValueGetter = (operand, type) => () => {
+const generateValueGetter = (premise, type) => () => {
   switch (type) {
     case premiseType.constant:
-      return Number.parseFloat(operand);
+      return Number.parseFloat(premise);
     case premiseType.special:
-      return operand.getValue();
+      return premise.getValue();
     default:
-      return Number.parseFloat(operand.value);
+      return Number.parseFloat(premise.value);
   }
 };
 
@@ -216,5 +216,3 @@ function fillOperators(operatorSelectionEl) {
     operatorSelectionEl.appendChild(opEl);
   }
 }
-
-//TODO(thales) rename operand to premise

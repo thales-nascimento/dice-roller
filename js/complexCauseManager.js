@@ -9,8 +9,8 @@ export default class ComplexCauseManager extends Manager {
     this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
-    this.operandBSelectionEl = creatorEl.querySelector("#new-complex-cause-operand-b-selector");
-    this.operandASelectionEl = creatorEl.querySelector("#new-complex-cause-operand-a-selector");
+    this.premiseBSelectionEl = creatorEl.querySelector("#new-complex-cause-premise-b-selector");
+    this.premiseASelectionEl = creatorEl.querySelector("#new-complex-cause-premise-a-selector");
 
     this.simpleCauseManager = simpleCauseManager;
     simpleCauseManager.addChangeListener(() => this.refreshCauses());
@@ -18,23 +18,23 @@ export default class ComplexCauseManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(operandA, operator, operandB) {
+  generateRow(premiseA, operator, premiseB) {
     const cause = {
-      name: `${operandA.key} ${operator.text} ${operandB.key}`,
+      name: `${premiseA.key} ${operator.text} ${premiseB.key}`,
       depends: new Set(),
       requiredBy: new Set(),
-      condition: new Condition(operator, () => operandA.check(), () => operandB.check()),
-      check: () => cause.check(),
+      condition: new Condition(operator, () => premiseA.check(), () => premiseB.check()),
+      check: () => cause.condition.check(),
     };
 
     if (!this.validateDuplicateManagedName(cause.name)) {
       return;
     }
     cause.key = this.nextKey();
-    cause.depends.add(operandA);
-    operandA.requiredBy.add(cause);
-    cause.depends.add(operandB);
-    operandB.requiredBy.add(cause);
+    cause.depends.add(premiseA);
+    premiseA.requiredBy.add(cause);
+    cause.depends.add(premiseB);
+    premiseB.requiredBy.add(cause);
 
     const keyEl = makeLabel({text: cause.key, classes: ["standard-row", "complex-cause-key"]});
     const nameEl = makeLabel({text: cause.name, classes: ["standard-row", "menu-label"]});
@@ -54,26 +54,26 @@ export default class ComplexCauseManager extends Manager {
 
     fillOperators(operatorSelectionEl);
 
-    this.operandASelectionEl.addEventListener("change", removeInputError);
-    this.operandBSelectionEl.addEventListener("change", removeInputError);
+    this.premiseASelectionEl.addEventListener("change", removeInputError);
+    this.premiseBSelectionEl.addEventListener("change", removeInputError);
 
     this.refreshCauses();
 
     addNewButtonEl.addEventListener("click", () => {
-      if (!validateInputValue(this.operandASelectionEl)) {
+      if (!validateInputValue(this.premiseASelectionEl)) {
         return;
       }
-      if (!validateInputValue(this.operandBSelectionEl)) {
+      if (!validateInputValue(this.premiseBSelectionEl)) {
         return;
       }
 
-      const operandAKey = this.operandASelectionEl.value;
-      const operandA = this.simpleCauseManager.getManagedByKey(operandAKey)
-      const operandBKey = this.operandBSelectionEl.value;
-      const operandB = this.simpleCauseManager.getManagedByKey(operandBKey)
+      const premiseAKey = this.premiseASelectionEl.value;
+      const premiseA = this.simpleCauseManager.getManagedByKey(premiseAKey)
+      const premiseBKey = this.premiseBSelectionEl.value;
+      const premiseB = this.simpleCauseManager.getManagedByKey(premiseBKey)
       const operator = propositionOperators[operatorSelectionEl.value];
 
-      this.generateRow(operandA, operator, operandB);
+      this.generateRow(premiseA, operator, premiseB);
     });
   }
 
@@ -81,11 +81,11 @@ export default class ComplexCauseManager extends Manager {
     const causes = this.simpleCauseManager.getAllManaged();
     const optionEls = causes.map(c => makeOption({text: c.key, value: c.key}));
 
-    this.refreshOperandSelection(this.operandASelectionEl, optionEls);
-    this.refreshOperandSelection(this.operandBSelectionEl, optionEls.map(v => v.cloneNode(true)));
+    this.refreshpremiseSelection(this.premiseASelectionEl, optionEls);
+    this.refreshpremiseSelection(this.premiseBSelectionEl, optionEls.map(v => v.cloneNode(true)));
   }
 
-  refreshOperandSelection(selectionEl, optionEls) {
+  refreshpremiseSelection(selectionEl, optionEls) {
     selectionEl.innerHTML = "";
     for (const option of optionEls) {
       selectionEl.appendChild(option);
