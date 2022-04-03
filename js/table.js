@@ -38,7 +38,13 @@ export default class Table {
         inputEl.value = dice.value;
       }
       const triggeredCausalities = this.causalityManager.check();
-      console.log('triggered: ', triggeredCausalities);
+      this.causalityListEL.innerHTML = "";
+      for (const causality of triggeredCausalities) {
+        const keyEl = makeLabel({text: causality.key, tooltip: causality.tooltip, classes: ["causality-key"]});
+        const effectEl = makeLabel({text: causality.effect.key, classes: ["effect-key"]});
+        const causalityEl = makeFlexRow({children: [keyEl, effectEl]});
+        this.causalityListEL.appendChild(causalityEl);
+      }
     });
   }
 }

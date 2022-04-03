@@ -120,9 +120,12 @@ body > fieldset:first-child {
   height: 100%; ;
 }
 
+#table-dice-list {
+  margin-right: 12px;
+}
 .rollable-dice input {
   width: 4em;
 }
 
 /*TODO(THALES) adicionar máximo de linhas na paleta e ativar scroll se necessário*/
-
+/*TODO(THALES) deixar mais visivel os dados rolados*/
