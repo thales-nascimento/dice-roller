@@ -2,9 +2,16 @@ import { flash } from "./domUtils.js";
 import openConfirmator from "./confirmator.js";
 
 export default class Manager {
-  constructor() {
+  constructor(keyPrefix) {
+    this.keyCounter = 0;
     this.changeListeners = [];
     this.managed = {};
+    this.keyPrefix = keyPrefix;
+  }
+
+  nextKey() {
+    this.keyCounter += 1;
+    return `${this.keyPrefix}${this.keyCounter}`
   }
 
   getAllManaged() {
@@ -58,6 +65,16 @@ export default class Manager {
       }
       flash(this.managed[key].el);
       return false;
+    }
+    return true;
+  }
+
+  validateDuplicateManagedName(name) {
+    for (const m of this.getAllManaged()) {
+      if (m.name === name) {
+        flash(m.el);
+        return false;
+      }
     }
     return true;
   }

@@ -6,7 +6,7 @@ const constantText = "const";
 
 export default class SimpleRuleManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
-    super();
+    super("→");
     this.topLevelEl = topLevelEl;
     this.mangedListEl = topLevelEl.querySelector(".list");
 
@@ -26,15 +26,16 @@ export default class SimpleRuleManager extends Manager {
 
   generateRow(operandA, operator, operandB, bIsConstant) {
     const rule = {
-      key: `${operandA.key} ${operator.text} ${bIsConstant ? operandB : operandB.key}`,
+      name: `${operandA.key} ${operator.text} ${bIsConstant ? operandB : operandB.key}`,
       depends: new Set(),
       requiredBy: new Set(),
       condition: new Condition(operator, () => operandA.value, bIsConstant ? () => operandB : () => operandB.value),
     };
 
-    if (!this.validateDuplicateManagedKey(rule.key)) {
+    if (!this.validateDuplicateManagedName(rule.name)) {
       return;
     }
+    rule.key = this.nextKey();
     rule.depends.add(operandA);
     operandA.requiredBy.add(rule);
     if (!bIsConstant) {
@@ -43,9 +44,10 @@ export default class SimpleRuleManager extends Manager {
     }
 
     const keyEl = makeLabel({text: rule.key, classes: ["simple-cause-key"]});
+    const nameEl = makeLabel({text: rule.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
-    rule.el = makeFlexRow({children: [keyEl, removeButtonEl]});
+    rule.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, rule);
 
     this.managed[rule.key] = rule;

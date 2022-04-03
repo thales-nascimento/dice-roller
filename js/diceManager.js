@@ -3,7 +3,7 @@ import Manager from "./manager.js";
 
 export default class DiceManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    super();
+    super("⚂");
     this.diceIndex = 0;
 
     this.topLevelEl = topLevelEl;
@@ -60,11 +60,6 @@ export default class DiceManager extends Manager {
     this.managed[dice.key] = dice;
     this.mangedListEl.appendChild(dice.el);
     this.onChange();
-  }
-
-  nextKey() {
-    this.diceIndex += 1;
-    return `#${this.diceIndex}`
   }
 
   prepareAdderButton() {
