@@ -114,6 +114,10 @@ body > fieldset:first-child {
   border-color: darkblue;
   border-width: 4px;
 }
+.variable-input:disabled {
+  color: rgb(116, 116, 116);
+  background-color: whitesmoke;
+}
 
 .input-error {
   color: darkred;

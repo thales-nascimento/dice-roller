@@ -1,11 +1,13 @@
 import { makeLabel, makeInput, makeFlexRow } from "./domUtils.js";
 
 export default class Table {
-  constructor(topLevelEl, diceManager, causalityManager) {
+  constructor(topLevelEl, variableManager, diceManager, causalityManager) {
     this.managed = [];
     this.topLevelEl = topLevelEl;
     this.diceListEl = topLevelEl.querySelector("#table-dice-list");
     this.causalityListEL = topLevelEl.querySelector("#table-causality-list");
+
+    this.variableManager = variableManager;
 
     this.diceManager = diceManager;
     this.diceManager.addChangeListener(() => this.refreshDices());
@@ -37,6 +39,7 @@ export default class Table {
         dice.roll(dice);
         inputEl.value = dice.value;
       }
+      this.variableManager.refreshFixedVariables();
       const triggeredCausalities = this.causalityManager.check();
       this.causalityListEL.innerHTML = "";
       for (const causality of triggeredCausalities) {

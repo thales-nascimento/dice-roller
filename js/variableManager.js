@@ -1,18 +1,42 @@
 import { makeFlexRow, makeButton, makeLabel, makeNumberInput, warmup } from "./domUtils.js";
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
+const sumVariableName = "sum";
+const averageVariableName = "average";
+
 export default class VariableManager extends Manager {
-  constructor(topLevelEl, creatorEl) {
+  constructor(topLevelEl, creatorEl, diceManager) {
     super();
     this.topLevelEl = topLevelEl;
     this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
 
+    this.diceManager = diceManager;
+
     this.prepareAdderButton();
+    this.generateFixedVariables();
   }
 
-  generateRow(name) {
+  generateFixedVariables() {
+    this.generateRow(sumVariableName, true);
+    this.generateRow(averageVariableName, true);
+  }
+
+  refreshFixedVariables() {
+    console.log("refresh");
+    const diceValues = this.diceManager.getDiceValues();
+
+    const sumVariable = this.managed[sumVariableName];
+    sumVariable.value = diceValues.reduce((accumulated, v) => accumulated + v, 0);
+    sumVariable.inputEl.value = sumVariable.value;
+
+    const avgVariable = this.managed[averageVariableName];
+    avgVariable.value = (sumVariable.value / diceValues.length).toFixed(2);
+    avgVariable.inputEl.value = avgVariable.value;
+  }
+
+  generateRow(name, fixed) {
     const variable = {
       key: name,
       value: 0,
@@ -21,13 +45,15 @@ export default class VariableManager extends Manager {
     };
 
     const keyEl = makeLabel({text: variable.key, classes: ["standard-row", "variable-key"]});
-    const inputEl = makeNumberInput({min: 0, step: 1, value: 1, classes: ["standard-row", "number-input", "variable-input"]});
     const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
-    variable.el = makeFlexRow({children: [keyEl, inputEl, removeButtonEl]});
-    inputEl.addEventListener("change", (evt) => {
+    removeButtonEl.disabled = !!fixed;
+    variable.inputEl = makeNumberInput({min: 0, step: 1, value: 0, classes: ["standard-row", "number-input", "variable-input"]});
+    variable.inputEl.disabled = !!fixed;
+    variable.inputEl.addEventListener("change", (evt) => {
       variable.value = evt.target.value;
     });
-    warmup("change", inputEl);
+    warmup("change", variable.inputEl);
+    variable.el = makeFlexRow({children: [keyEl, variable.inputEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, variable);
 
     this.managed[variable.key] = variable;
@@ -55,6 +81,3 @@ export default class VariableManager extends Manager {
     });
   }
 }
-
-//TODO(thales) variavel de soma
-//TODO(thales) variavel de média

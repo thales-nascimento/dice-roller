@@ -26,10 +26,10 @@ export default class SimpleCauseManager extends Manager {
     this.nDicesInputEl = creatorEl.querySelector("#new-simple-cause-n-dices");
 
     this.diceManager = diceManager;
-    diceManager.addChangeListener(() => this.refreshVariables());
+    diceManager.addChangeListener(() => this.refreshOperands());
 
     this.variableManager = variableManager;
-    variableManager.addChangeListener(() => this.refreshVariables());
+    variableManager.addChangeListener(() => this.refreshOperands());
 
     this.specialCauses = {
       anyDice: {
@@ -109,7 +109,7 @@ export default class SimpleCauseManager extends Manager {
       this.constantInputEl.disabled = evt.target.value !== constantText;
     });
 
-    this.refreshVariables();
+    this.refreshOperands();
 
     addNewButtonEl.addEventListener("click", () => {
       if (!validateInputValue(this.operandASelectionEl)) {
@@ -127,7 +127,7 @@ export default class SimpleCauseManager extends Manager {
     });
   }
 
-  refreshVariables() {
+  refreshOperands() {
     const variables = this.variableManager.getAllManaged();
     const dices = this.diceManager.getAllManaged();
     let optionEls = variables.concat(dices).map(o => makeOption({text: o.key, value: o.key}));
@@ -202,11 +202,11 @@ export default class SimpleCauseManager extends Manager {
 const generateValueGetter = (operand, type) => () => {
   switch (type) {
     case premiseType.constant:
-      return operand;
+      return Number.parseFloat(operand);
     case premiseType.special:
       return operand.getValue();
     default:
-      return operand.value;
+      return Number.parseFloat(operand.value);
   }
 };
 
@@ -216,3 +216,5 @@ function fillOperators(operatorSelectionEl) {
     operatorSelectionEl.appendChild(opEl);
   }
 }
+
+//TODO(thales) rename operand to premise

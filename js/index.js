@@ -16,7 +16,7 @@ function start() {
 
   const variableEl = document.querySelector("#variables-top-level");
   const variableCreatorEl = document.querySelector("#new-variable");
-  const variableManager = new VariableManager(variableEl, variableCreatorEl);
+  const variableManager = new VariableManager(variableEl, variableCreatorEl, diceManager);
 
   const simpleCauseEl = document.querySelector("#simple-causes-top-level");
   const simpleCauseCreatorEl = document.querySelector("#new-simple-cause");
@@ -35,7 +35,7 @@ function start() {
   const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleCauseManager, complexCauseManager, effectManager);
 
   const tableEl = document.querySelector("#table-top-level")
-  const table = new Table(tableEl, diceManager, causalityManager);
+  const table = new Table(tableEl, variableManager, diceManager, causalityManager);
 }
 
 window.addEventListener("load", function () {
