@@ -29,6 +29,11 @@ body > fieldset:first-child {
   flex-wrap: wrap;
 }
 
+.list {
+  height: 120px;
+  overflow-y: scroll;
+}
+
 .standard-row {
   display: block;
   height: 24px;
@@ -155,5 +160,3 @@ body > fieldset:first-child {
   border-color: goldenrod;
   border-width: 4px;
 }
-
-/*TODO(THALES) adicionar máximo de linhas na paleta e ativar scroll se necessário*/
