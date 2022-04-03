@@ -2,7 +2,7 @@ import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUti
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class CausalityManager extends Manager {
-  constructor(topLevelEl, creatorEl, simpleRuleManager, effectManger) {
+  constructor(topLevelEl, creatorEl, simpleCauseManager, effectManger) {
     super("→ ");
     this.topLevelEl = topLevelEl;
     this.mangedListEl = topLevelEl.querySelector(".list");
@@ -11,8 +11,8 @@ export default class CausalityManager extends Manager {
     this.causeSelectionEl = creatorEl.querySelector("#new-causality-cause");
     this.effectionSelectionEl = creatorEl.querySelector("#new-causality-effect");
 
-    this.simpleRuleManager = simpleRuleManager;
-    simpleRuleManager.addChangeListener(() => this.refreshCauses());
+    this.simpleCauseManager = simpleCauseManager;
+    simpleCauseManager.addChangeListener(() => this.refreshCauses());
 
     this.effectManager = effectManger;
     effectManger.addChangeListener(() => this.refreshEffects());
@@ -68,7 +68,7 @@ export default class CausalityManager extends Manager {
         return;
       }
 
-      const cause = this.simpleRuleManager.getManagedByKey(this.causeSelectionEl.value);
+      const cause = this.simpleCauseManager.getManagedByKey(this.causeSelectionEl.value);
       const effect = this.effectManager.getManagedByKey(effectSelectionEl.value);
 
       this.generateRow(cause, effect);
@@ -76,12 +76,12 @@ export default class CausalityManager extends Manager {
   }
 
   refreshCauses() {
-    const causes = this.simpleRuleManager.getAllManaged();
+    const causes = this.simpleCauseManager.getAllManaged();
     const optionEls = causes.map(r => makeOption({text: r.key, value: r.key}));
 
     this.causeSelectionEl.innerHTML = "";
-    for (const ruleEl of optionEls) {
-      this.causeSelectionEl.appendChild(ruleEl);
+    for (const causeEl of optionEls) {
+      this.causeSelectionEl.appendChild(causeEl);
     }
     warmup("change", this.causeSelectionEl);
   }
@@ -91,8 +91,8 @@ export default class CausalityManager extends Manager {
     const optionEls = effects.map(e => makeOption({text: e.key, value: e.key}));
 
     this.effectionSelectionEl.innerHTML = "";
-    for (const ruleEl of optionEls) {
-      this.effectionSelectionEl.appendChild(ruleEl);
+    for (const causeEl of optionEls) {
+      this.effectionSelectionEl.appendChild(causeEl);
     }
     warmup("change", this.effectionSelectionEl);
   }

@@ -4,7 +4,7 @@ import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 const constantText = "const";
 
-export default class SimpleRuleManager extends Manager {
+export default class SimpleCauseManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
     super("%");
     this.topLevelEl = topLevelEl;
@@ -25,33 +25,33 @@ export default class SimpleRuleManager extends Manager {
   }
 
   generateRow(operandA, operator, operandB, bIsConstant) {
-    const rule = {
+    const cause = {
       name: `${operandA.key} ${operator.text} ${bIsConstant ? operandB : operandB.key}`,
       depends: new Set(),
       requiredBy: new Set(),
       condition: new Condition(operator, () => operandA.value, bIsConstant ? () => operandB : () => operandB.value),
     };
 
-    if (!this.validateDuplicateManagedName(rule.name)) {
+    if (!this.validateDuplicateManagedName(cause.name)) {
       return;
     }
-    rule.key = this.nextKey();
-    rule.depends.add(operandA);
-    operandA.requiredBy.add(rule);
+    cause.key = this.nextKey();
+    cause.depends.add(operandA);
+    operandA.requiredBy.add(cause);
     if (!bIsConstant) {
-      rule.depends.add(operandB);
-      operandB.requiredBy.add(rule);
+      cause.depends.add(operandB);
+      operandB.requiredBy.add(cause);
     }
 
-    const keyEl = makeLabel({text: rule.key, classes: ["simple-cause-key"]});
-    const nameEl = makeLabel({text: rule.name, classes: ["menu-label"]});
+    const keyEl = makeLabel({text: cause.key, classes: ["simple-cause-key"]});
+    const nameEl = makeLabel({text: cause.name, classes: ["menu-label"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
-    rule.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
-    this.prepareRemoveConfirmationOnButton(removeButtonEl, rule);
+    cause.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
+    this.prepareRemoveConfirmationOnButton(removeButtonEl, cause);
 
-    this.managed[rule.key] = rule;
-    this.mangedListEl.appendChild(rule.el);
+    this.managed[cause.key] = cause;
+    this.mangedListEl.appendChild(cause.el);
     this.onChange();
   }
 
@@ -123,5 +123,3 @@ function fillOperators(operatorSelectionEl) {
     operatorSelectionEl.appendChild(opEl);
   }
 }
-
-/*TODO(thales) renomear rule => condition */
