@@ -61,16 +61,6 @@ body > fieldset:first-child {
   color: white;
   width: 10em;
 }
-.operator {
-  padding: 0 3px;
-  background-color: gold;
-  width: 1em;
-}
-.constant {
-  padding: 0 3px;
-  background-color: darkturquoise;
-  width: 2em;
-}
 .simple-cause-key {
   padding: 0 3px;
   background-color: darkorange;
@@ -93,9 +83,6 @@ body > fieldset:first-child {
 .menu-remove-button:disabled {
   background-color: gray;
 }
-.menu-adder-button {
-  margin-top: 4px;
-}
 
 .input-error {
   color: darkred;
@@ -111,9 +98,6 @@ body > fieldset:first-child {
   }
 }
 
-#new-dice-presets button {
-  margin: 0 4px;
-}
 .dice-weight {
   height: 24px;
   line-height: 24px;
@@ -141,5 +125,4 @@ body > fieldset:first-child {
 }
 
 /*TODO(THALES) adicionar máximo de linhas na paleta e ativar scroll se necessário*/
-/*TODO(thales) rever todas as linhas de css e remover as classes inutilizadas */
 
