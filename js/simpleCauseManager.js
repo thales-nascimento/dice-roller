@@ -42,7 +42,7 @@ export default class SimpleCauseManager extends Manager {
         key: "nDices",
         name: "n dices",
         requiredBy: new Set(),
-        getValue: () => ({groupMode: groupMode.n, values: this.diceManager.getDiceValues(), n: Number.parseInt(this.nDicesInputEl.value)}),
+        getValue: (n) => ({groupMode: groupMode.n, values: this.diceManager.getDiceValues(), n: n}),
       },
       allDices: {
         key: "allDices",
@@ -55,10 +55,12 @@ export default class SimpleCauseManager extends Manager {
     this.prepareAdderButton();
   }
 
-  generateRow(operator, premiseA, aType, premiseB, bType) {
+  generateRow(operator, premiseA, aType, premiseB, bType, n) {
+    const leftName = premiseA === this.specialCauses.nDices ? `${n} dices` : premiseA.key;
+    const rightName = bType === premiseType.constant ? premiseB : premiseB.key;
     const cause = {
-      name: `${premiseA.key} ${operator.text} ${bType == premiseType.constant ? premiseB : premiseB.key}`,
-      condition: new Condition(operator, generateValueGetter(premiseA, aType), generateValueGetter(premiseB, bType)),
+      name: `${leftName} ${operator.text} ${rightName}`,
+      condition: new Condition(operator, generateValueGetter(premiseA, aType, n), generateValueGetter(premiseB, bType)),
       depends: new Set(),
       requiredBy: new Set(),
       check: () => cause.condition.check(),
@@ -118,12 +120,14 @@ export default class SimpleCauseManager extends Manager {
 
       const [ premiseA, aType ] = this.getPremiseAndType(this.premiseASelectionEl);
       const [ premiseB, bType ] = this.getPremiseAndType(this.premiseBSelectionEl);
+      const n = Number.parseInt(this.nDicesInputEl.value);
 
       const operator = numberOperators[operatorSelectionEl.value];
       if (!this.validateOperation(operator, premiseA, aType, premiseB, bType)) {
         return;
       }
-      this.generateRow(operator, premiseA, aType, premiseB, bType);
+
+      this.generateRow(operator, premiseA, aType, premiseB, bType, n);
     });
   }
 
@@ -195,16 +199,15 @@ export default class SimpleCauseManager extends Manager {
       }
     }
     return true;
-    /*TODO(thales) melhorar verificaoes de condicao*/
   }
 }
 
-const generateValueGetter = (premise, type) => () => {
+const generateValueGetter = (premise, type, n) => () => {
   switch (type) {
     case premiseType.constant:
       return Number.parseFloat(premise);
     case premiseType.special:
-      return premise.getValue();
+      return premise.getValue(n);
     default:
       return Number.parseFloat(premise.value);
   }
