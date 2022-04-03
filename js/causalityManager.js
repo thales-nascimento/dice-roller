@@ -42,6 +42,7 @@ export default class CausalityManager extends Manager {
 
     this.managed[causality.key] = causality;
     this.mangedListEl.appendChild(causality.el);
+    console.log(this.managed);
   }
 
   prepareAdderButton() {
@@ -101,6 +102,13 @@ export default class CausalityManager extends Manager {
     }
     warmup("change", this.effectionSelectionEl);
   }
+
+  check() {
+    const causalities = this.getAllManaged();
+    return causalities.filter(causality => causality.cause.condition.check());
+  }
 }
 
 /*TODO(thales) não permitir adicionar duplicatas */;
+/*TODO(thales) trocar managed por Set */
+/*TODO(thales) trocar nome por cause => effect */

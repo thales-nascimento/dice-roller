@@ -1,5 +1,5 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
-import { operators } from "./condition.js"
+import { operators, Condition } from "./condition.js"
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 const constantText = "const";
@@ -25,6 +25,7 @@ export default class SimpleRuleManager extends Manager {
   }
 
   generateRow(name, operandA, operator, operandB) {
+    let operandBGetter;
     const rule = {
       key: name,
       tooltip: `${operandA.key} ${operator.text} `,
@@ -36,11 +37,14 @@ export default class SimpleRuleManager extends Manager {
 
     if (Number.parseFloat(operandB)) {
       rule.tooltip += operandB.toString();
+      operandBGetter = () => operandB;
     } else {
       rule.tooltip += operandB.key;
       rule.depends.add(operandB);
       operandB.requiredBy.add(rule);
+      operandBGetter = () => operandB.value;
     }
+    rule.condition = new Condition(operator, () => operandA.value, operandBGetter);
     const keyEl = makeLabel({text: rule.key, tooltip: rule.tooltip, classes: ["simple-cause-key"]});
     const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
 
@@ -132,3 +136,4 @@ function fillOperators(operatorSelectionEl) {
 }
 
 /*TODO(thales) não permitir adicionar duplicatas */;
+/*TODO(thales) renomear rule => condition */

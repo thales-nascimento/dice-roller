@@ -53,3 +53,5 @@ export default class EffectManager extends Manager {
     });
   }
 }
+
+//TODO(thales) add presets

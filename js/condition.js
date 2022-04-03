@@ -15,15 +15,15 @@ export const operators = {
 };
 
 export class Condition {
-  constructor(operandAGetter, operation, operandBGetter) {
+  constructor(operator, operandAGetter, operandBGetter) {
+    this.operator = operator;
     this.operandAGetter = operandAGetter;
-    this.operation = operation;
     this.operandBGetter = operandBGetter;
   }
 
   check() {
     const a = this.operandAGetter();
     const b = this.operandBGetter();
-    return this.operation.apply(a, b);
+    return this.operator.apply(a, b);
   }
 }

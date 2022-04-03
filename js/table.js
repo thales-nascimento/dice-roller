@@ -4,7 +4,8 @@ export default class Table {
   constructor(topLevelEl, diceManager, causalityManager) {
     this.managed = [];
     this.topLevelEl = topLevelEl;
-    this.managedListEl = topLevelEl.querySelector(".list");
+    this.diceListEl = topLevelEl.querySelector("#table-dice-list");
+    this.causalityListEL = topLevelEl.querySelector("#table-causality-list");
 
     this.diceManager = diceManager;
     this.diceManager.addChangeListener(() => this.refreshDices());
@@ -17,11 +18,11 @@ export default class Table {
   refreshDices() {
     const dices = this.diceManager.getAllManaged();
     this.managed = [];
-    this.managedListEl.innerHTML = "";
+    this.diceListEl.innerHTML = "";
 
     for (const dice of dices) {
       const { diceEl, inputEl } = makeDiceEl(dice);
-      this.managedListEl.appendChild(diceEl);
+      this.diceListEl.appendChild(diceEl);
       this.managed.push({
         dice,
         inputEl,
@@ -33,9 +34,11 @@ export default class Table {
     const rollButtonEl = this.topLevelEl.querySelector("#table-roll");
     rollButtonEl.addEventListener("click", () => {
       for (const { dice, inputEl } of this.managed) {
-        const rolled = rollDice(dice);
-        inputEl.value = rolled;
+        dice.roll(dice);
+        inputEl.value = dice.value;
       }
+      const triggeredCausalities = this.causalityManager.check();
+      console.log('triggered: ', triggeredCausalities);
     });
   }
 }
@@ -50,20 +53,3 @@ function makeDiceEl(dice) {
   return { diceEl, inputEl };
 }
 
-function rollDice(dice) {
-  let rolled = getRandomInt(1, dice.totalWeight);
-  let consumed = 0;
-  let i;
-  for (i = 0; i < dice.faces && consumed < rolled; i += 1) {
-    consumed += dice.weights[i];
-  }
-  return i;
-}
-
-function getRandomInt(min, maxInclusive) {
-  const array = new Uint8Array(4);
-  window.crypto.getRandomValues(array);
-  const view = new DataView(array.buffer, 0);
-  const n = view.getUint32(0, true);
-  return n % (maxInclusive - min + 1) + min;
-}

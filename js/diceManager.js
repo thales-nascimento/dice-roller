@@ -24,6 +24,15 @@ export default class DiceManager extends Manager {
       weights,
       balanced: true,
       totalWeight: 0,
+      value: null,
+      roll: () => {
+        let rolled = getRandomInt(1, dice.totalWeight);
+        let i;
+        for (i = 0; i < dice.faces && rolled > 0; i += 1) {
+          rolled -= dice.weights[i];
+        }
+        dice.value = i;
+      },
       depends: new Set(),
       requiredBy: new Set(),
     };
@@ -99,4 +108,13 @@ export default class DiceManager extends Manager {
       });
     }
   }
+}
+
+
+function getRandomInt(min, maxInclusive) {
+  const array = new Uint8Array(4);
+  window.crypto.getRandomValues(array);
+  const view = new DataView(array.buffer, 0);
+  const n = view.getUint32(0, true);
+  return n % (maxInclusive - min + 1) + min;
 }
