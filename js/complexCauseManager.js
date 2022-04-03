@@ -35,9 +35,9 @@ export default class ComplexCauseManager extends Manager {
     cause.depends.add(operandB);
     operandB.requiredBy.add(cause);
 
-    const keyEl = makeLabel({text: cause.key, classes: ["complex-cause-key"]});
-    const nameEl = makeLabel({text: cause.name, classes: ["menu-label"]});
-    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
+    const keyEl = makeLabel({text: cause.key, classes: ["standard-row", "complex-cause-key"]});
+    const nameEl = makeLabel({text: cause.name, classes: ["standard-row", "menu-label"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
 
     cause.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, cause);

@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 html,body {
   width: 100vw;
   height: 100vh;
@@ -25,19 +29,21 @@ body > fieldset:first-child {
   flex-wrap: wrap;
 }
 
-.action-button {
-  width: 20em;
-}
-
-.causality-key, .operator, .dice-key, .effect-key, .variable-key, .simple-cause-key, .complex-cause-key, .menu-label, .menu-remove-button {
+.standard-row {
   display: block;
   height: 24px;
   line-height: 24px;
   margin: 0 0 2px 0;
-  border: 0;
+  padding: 0;
+  border-width: 0;
   text-align: center;
   text-overflow: ellipsis;
 }
+
+.action-button {
+  width: 20em;
+}
+
 .dice-key {
   background-color: darkviolet;
   color: white;
@@ -48,12 +54,6 @@ body > fieldset:first-child {
   background-color: olivedrab;
   width: 10em;
   padding: 0 8px;
-}
-.variable-key {
-  padding: 0 3px;
-  background-color: darkblue;
-  color: white;
-  width: 10em;
 }
 .effect-key {
   padding: 0 3px;
@@ -87,6 +87,20 @@ body > fieldset:first-child {
 }
 .menu-remove-button:disabled {
   background-color: gray;
+}
+.variable-key {
+  padding: 0 3px;
+  background-color: darkblue;
+  color: white;
+  width: 10em;
+}
+.variable-input {
+  font-weight: bolder;
+  width: 5em;
+  text-align: center;
+  color: black;
+  border-color: darkblue;
+  border-width: 4px;
 }
 
 .input-error {

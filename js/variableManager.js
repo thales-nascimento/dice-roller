@@ -1,4 +1,4 @@
-import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
+import { makeFlexRow, makeButton, makeLabel, makeNumberInput, warmup } from "./domUtils.js";
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class VariableManager extends Manager {
@@ -15,13 +15,19 @@ export default class VariableManager extends Manager {
   generateRow(name) {
     const variable = {
       key: name,
+      value: 0,
       depends: new Set(),
       requiredBy: new Set(),
     };
 
-    const keyEl = makeLabel({text: variable.key, classes: ["variable-key"]});
-    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
-    variable.el = makeFlexRow({children: [keyEl, removeButtonEl]});
+    const keyEl = makeLabel({text: variable.key, classes: ["standard-row", "variable-key"]});
+    const inputEl = makeNumberInput({min: 0, step: 1, value: 1, classes: ["standard-row", "variable-input"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
+    variable.el = makeFlexRow({children: [keyEl, inputEl, removeButtonEl]});
+    inputEl.addEventListener("change", (evt) => {
+      variable.value = evt.target.value;
+    });
+    warmup("change", inputEl);
     this.prepareRemoveConfirmationOnButton(removeButtonEl, variable);
 
     this.managed[variable.key] = variable;

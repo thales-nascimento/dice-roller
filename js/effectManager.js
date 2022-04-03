@@ -25,8 +25,8 @@ export default class EffectManager extends Manager {
       depends: new Set(),
     };
 
-    const keyEl = makeLabel({text: effect.key, classes: ["effect-key"]});
-    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
+    const keyEl = makeLabel({text: effect.key, classes: ["standard-row", "effect-key"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
     effect.el = makeFlexRow({children: [keyEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, effect);
 

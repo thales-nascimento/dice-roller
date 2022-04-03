@@ -51,9 +51,9 @@ export default class DiceManager extends Manager {
       console.log(dice.totalWeight);
       dice.tooltip = `${dice.faces} faces, unfair: ${weights.map(w => `${w}/${dice.totalWeight}`).join(' ')}.`;
     }
-    const keyEl = makeLabel({text: dice.key, tooltip: dice.tooltip, classes: ["dice-key"]});
-    const nameEl = makeLabel({text: dice.name, tooltip: dice.tooltip, classes: ["menu-label"]});
-    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
+    const keyEl = makeLabel({text: dice.key, tooltip: dice.tooltip, classes: ["standard-row", "dice-key"]});
+    const nameEl = makeLabel({text: dice.name, tooltip: dice.tooltip, classes: ["standard-row", "menu-label"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
     dice.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, dice);
 

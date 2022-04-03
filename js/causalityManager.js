@@ -42,9 +42,9 @@ export default class CausalityManager extends Manager {
     causality.depends.add(effect);
     effect.requiredBy.add(causality);
 
-    const keyEl = makeLabel({text: causality.key, tooltip: causality.tooltip, classes: ["causality-key"]});
-    const nameEl = makeLabel({text: causality.name, tooltip: causality.tooltip, classes: ["menu-label"]});
-    const removeButtonEl = makeButton({text: "×", classes: ["menu-remove-button"]});
+    const keyEl = makeLabel({text: causality.key, tooltip: causality.tooltip, classes: ["standard-row", "causality-key"]});
+    const nameEl = makeLabel({text: causality.name, tooltip: causality.tooltip, classes: ["standard-row", "menu-label"]});
+    const removeButtonEl = makeButton({text: "×", classes: ["standard-row", "menu-remove-button"]});
 
     causality.el = makeFlexRow({children: [keyEl, nameEl, removeButtonEl]});
     this.prepareRemoveConfirmationOnButton(removeButtonEl, causality);
