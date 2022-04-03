@@ -62,6 +62,7 @@ export default class SimpleCauseManager extends Manager {
     fillOperators(operatorSelectionEl);
 
     this.operandASelectionEl.addEventListener("change", removeInputError);
+    this.constantInputEl.addEventListener("change", removeInputError);
 
     this.refreshVariables();
 
@@ -71,13 +72,21 @@ export default class SimpleCauseManager extends Manager {
       }
 
       const operandAKey = this.operandASelectionEl.value;
-      const operandA = this.diceManager.getManagedByKey(operandAKey) || this.variableManager.getManagedByKey(operandAKey);
+      let operandA = this.diceManager.getManagedByKey(operandAKey)
+      const aIsDice = operandA !== undefined;
+      if (!aIsDice) {
+        operandA = this.variableManager.getManagedByKey(operandAKey);
+      }
       const operator = operators[operatorSelectionEl.value];
       let operandB;
-      let bIsConstant = this.operandBSelectionEl.value === constantText;
+      const bIsConstant = this.operandBSelectionEl.value === constantText;
       if (bIsConstant) {
-        //TODO(thales) check if constant makes sense against dice
-        operandB = this.constantInputEl.value;
+        const constant = this.constantInputEl.value;
+        if (aIsDice && constant > operandA.faces) {
+          this.constantInputEl.classList.add("input-error");
+          return;
+        }
+        operandB = constant;
       } else {
         const operandBKey = this.operandBSelectionEl.value;
         operandB = this.diceManager.getManagedByKey(operandBKey) || this.variableManager.getManagedByKey(operandBKey);
