@@ -2,8 +2,6 @@ import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUti
 import { propositionOperators, Condition } from "./condition.js"
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
-const constantText = "const";
-
 export default class ComplexCauseManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleCauseManager) {
     super("@");

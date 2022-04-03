@@ -150,3 +150,5 @@ function fillOperators(operatorSelectionEl) {
     operatorSelectionEl.appendChild(opEl);
   }
 }
+
+//TODO(THALES) IMPLEMENT VARIABLE CHANGERS

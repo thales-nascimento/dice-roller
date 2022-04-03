@@ -71,7 +71,8 @@ export default class CausalityManager extends Manager {
         return;
       }
 
-      const cause = this.simpleCauseManager.getManagedByKey(this.causeSelectionEl.value);
+      const causeKey = this.causeSelectionEl.value;
+      const cause = this.simpleCauseManager.getManagedByKey(causeKey) || this.complexCauseManager.getManagedByKey(causeKey);
       const effect = this.effectManager.getManagedByKey(effectSelectionEl.value);
 
       this.generateRow(cause, effect);
@@ -79,9 +80,9 @@ export default class CausalityManager extends Manager {
   }
 
   refreshCauses() {
-    //TODO use complex causes
-    const causes = this.simpleCauseManager.getAllManaged();
-    const optionEls = causes.map(r => makeOption({text: r.key, value: r.key}));
+    const simpleCauses = this.simpleCauseManager.getAllManaged();
+    const complexCauses = this.complexCauseManager.getAllManaged();
+    const optionEls = simpleCauses.concat(complexCauses).map(r => makeOption({text: r.key, value: r.key}));
 
     this.causeSelectionEl.innerHTML = "";
     for (const causeEl of optionEls) {
