@@ -1,15 +1,21 @@
-import { makeFlexRow, makeButton, makeLabel, flash } from "./domUtils.js";
-import Manager, { removeInputError } from "./manager.js";
+import { makeFlexRow, makeButton, makeLabel } from "./domUtils.js";
+import Manager, { validateInputValue , removeInputError } from "./manager.js";
 
 export default class EffectManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    super();
+    super("★");
     this.topLevelEl = topLevelEl;
     this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
 
     this.prepareAdderButton();
+    this.generatePresets();
+  }
+
+  generatePresets() {
+    this.generateRow(this.keyPrefix + "Success");
+    this.generateRow(this.keyPrefix + "Failure");
   }
 
   generateRow(name) {
@@ -36,16 +42,12 @@ export default class EffectManager extends Manager {
     nameEl.addEventListener("input", removeInputError);
 
     addNewButtonEl.addEventListener("click", () => {
-      let name = nameEl.value;
-      if (name === "") {
-        nameEl.classList.add("input-error");
+      if (!validateInputValue(nameEl)) {
         return;
       }
 
-      name = "★" + name;
-      if (this.managed[name] !== undefined) {
-        nameEl.classList.add("input-error");
-        flash(this.managed[name].el);
+      const name = this.keyPrefix + nameEl.value;
+      if (!this.validateDuplicateManagedKey(name, nameEl)) {
         return;
       }
 
@@ -53,5 +55,3 @@ export default class EffectManager extends Manager {
     });
   }
 }
-
-//TODO(thales) add presets
