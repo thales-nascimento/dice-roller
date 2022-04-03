@@ -1,4 +1,4 @@
-import { makeLabel, makeNumberInput, makeFlexRow } from "./domUtils.js";
+import { makeLabel, makeInput, makeFlexRow } from "./domUtils.js";
 
 export default class Table {
   constructor(topLevelEl, diceManager, causalityManager) {
@@ -53,9 +53,9 @@ function makeDiceEl(dice) {
   const inputId = `table-dice-${dice.key}`;
   const keyEl = makeLabel({text: dice.key, target: inputId, tooltip: dice.tooltip, classes: ["dice-key"]});
   const nameEl = makeLabel({text: dice.name, target: inputId, tooltip: dice.tooltip, classes: ["menu-label"]});
-  const inputEl = makeNumberInput({id: inputId, min: 1, max: dice.totalWeight, placeholder: "-"});
+  const inputEl = makeInput({id: inputId, placeholder: "-", classes: ["table-dice-value"]});
   inputEl.disabled = true;
-  const diceEl = makeFlexRow({children: [keyEl, nameEl, inputEl], classes: ["rollable-dice"]});
+  const diceEl = makeFlexRow({children: [keyEl, nameEl, inputEl], classes: ["table-rollable-dice"]});
   return { diceEl, inputEl };
 }
 

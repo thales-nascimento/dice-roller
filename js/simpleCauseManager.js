@@ -1,6 +1,6 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
 import { numberOperators, Condition } from "./condition.js"
-import Manager, { removeInputError, validateInputValue } from "./manager.js";
+import Manager, { validateInputValue } from "./manager.js";
 
 const constantText = "const";
 

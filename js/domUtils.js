@@ -1,3 +1,5 @@
+import { setIfNotUndefined } from "./unclassifiedUtils.js";
+
 export function makeDiv({children = [], classes = []}) {
   console.assert(Array.isArray(children));
   console.assert(Array.isArray(classes));
@@ -38,9 +40,7 @@ export function makeLabel({text, target, tooltip, classes = []}) {
   const labelEl = document.createElement('label');
   labelEl.textContent = text;
   labelEl.for = target;
-  if (tooltip !== undefined) {
-    labelEl.title = tooltip;
-  }
+  setIfNotUndefined(labelEl, "tooltip", tooltip);
   for (const c of classes) {
     labelEl.classList.add(c);
   }
@@ -58,32 +58,26 @@ export function makeOption({text, value, classes = []}) {
   return optionEl;
 }
 
-export function makeNumberInput({id, min, max, step, value, placeholder, classes = []}) {
+export function makeInput({type, id, min, max, step, value, placeholder, classes = []}) {
   console.assert(Array.isArray(classes));
   const inputEl = document.createElement('input');
-  inputEl.type = "number";
 
-  if (id !== undefined) {
-    inputEl.id = id;
-  }
-  if (min !== undefined) {
-    inputEl.min = min;
-  }
-  if (max !== undefined) {
-    inputEl.max = max;
-  }
-  if (step !== undefined) {
-    inputEl.step = step;
-  }
-  if (value !== undefined) {
-    inputEl.value = value;
-  }
-  if (placeholder !== undefined) {
-    inputEl.placeholder = placeholder;
-  }
+  setIfNotUndefined(inputEl, "type", type);
+  setIfNotUndefined(inputEl, "id", id);
+  setIfNotUndefined(inputEl, "min", min);
+  setIfNotUndefined(inputEl, "max", max);
+  setIfNotUndefined(inputEl, "step", step);
+  setIfNotUndefined(inputEl, "value", value);
+  setIfNotUndefined(inputEl, "placeholder", placeholder);
+
   for (const c of classes) {
     inputEl.classList.add(c);
   }
+  return inputEl;
+}
+
+export function makeNumberInput(recipe) {
+  const inputEl = makeInput({...recipe, type: "number"})
   return inputEl;
 }
 

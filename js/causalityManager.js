@@ -3,7 +3,7 @@ import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class CausalityManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleCauseManager, complexCauseManager, effectManger) {
-    super("→ ");
+    super("⇒");
     this.topLevelEl = topLevelEl;
     this.managedListEl = topLevelEl.querySelector(".list");
 
@@ -25,7 +25,7 @@ export default class CausalityManager extends Manager {
 
   generateRow(cause, effect) {
     const causality = {
-      name: `${cause.key} → ${effect.key}`,
+      name: `${cause.key} ⇒ ${effect.key}`,
       tooltip: `if ${cause.key} then ${effect.key}`,
       cause,
       effect,
