@@ -58,13 +58,13 @@ export function makeOption({text, value, classes = []}) {
   return optionEl;
 }
 
-export function makeNumberInput({name, min, max, value, step, classes = []}) {
+export function makeNumberInput({id, min, max, step, value, placeholder, classes = []}) {
   console.assert(Array.isArray(classes));
   const inputEl = document.createElement('input');
   inputEl.type = "number";
 
-  if (name !== undefined) {
-    inputEl.name = name;
+  if (id !== undefined) {
+    inputEl.id = id;
   }
   if (min !== undefined) {
     inputEl.min = min;
@@ -72,11 +72,14 @@ export function makeNumberInput({name, min, max, value, step, classes = []}) {
   if (max !== undefined) {
     inputEl.max = max;
   }
+  if (step !== undefined) {
+    inputEl.step = step;
+  }
   if (value !== undefined) {
     inputEl.value = value;
   }
-  if (step !== undefined) {
-    inputEl.step = step;
+  if (placeholder !== undefined) {
+    inputEl.placeholder = placeholder;
   }
   for (const c of classes) {
     inputEl.classList.add(c);

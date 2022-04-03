@@ -136,6 +136,10 @@ body > fieldset:first-child {
   height: 100%; ;
 }
 
+.rollable-dice input {
+  width: 4em;
+}
+
 /*TODO(THALES) adicionar máximo de linhas na paleta e ativar scroll se necessário*/
 /*TODO(thales) rever todas as linhas de css e remover as classes inutilizadas */
 

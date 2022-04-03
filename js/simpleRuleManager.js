@@ -8,7 +8,7 @@ export default class SimpleRuleManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
     super();
     this.topLevelEl = topLevelEl;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.operandBSelectionEl = creatorEl.querySelector("#new-simple-cause-operand-b-selector");
@@ -48,7 +48,7 @@ export default class SimpleRuleManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, rule);
 
     this.managed[rule.key] = rule;
-    this.menuEl.appendChild(rule.el);
+    this.mangedListEl.appendChild(rule.el);
     this.onChange();
   }
 

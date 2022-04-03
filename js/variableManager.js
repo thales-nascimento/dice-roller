@@ -5,7 +5,7 @@ export default class VariableManager extends Manager {
   constructor(topLevelEl, creatorEl) {
     super();
     this.topLevelEl = topLevelEl;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
 
@@ -25,7 +25,7 @@ export default class VariableManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, variable);
 
     this.managed[variable.key] = variable;
-    this.menuEl.appendChild(variable.el );
+    this.mangedListEl.appendChild(variable.el );
     this.onChange();
   }
 

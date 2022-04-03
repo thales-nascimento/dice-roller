@@ -5,7 +5,7 @@ export default class EffectManager extends Manager {
   constructor(topLevelEl, creatorEl) {
     super();
     this.topLevelEl = topLevelEl;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
 
@@ -25,7 +25,7 @@ export default class EffectManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, effect);
 
     this.managed[effect.key] = effect;
-    this.menuEl.appendChild(effect.el );
+    this.mangedListEl.appendChild(effect.el );
     this.onChange();
   }
 

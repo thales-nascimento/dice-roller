@@ -7,7 +7,7 @@ export default class DiceManager extends Manager {
     this.diceIndex = 0;
 
     this.topLevelEl = topLevelEl;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.facesEl = creatorEl.querySelector("#new-dice-faces");
@@ -21,6 +21,7 @@ export default class DiceManager extends Manager {
     const dice = {
       key: this.nextKey(),
       faces: weights.length,
+      weights,
       balanced: true,
       totalWeight: 0,
       depends: new Set(),
@@ -48,7 +49,7 @@ export default class DiceManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, dice);
 
     this.managed[dice.key] = dice;
-    this.menuEl.appendChild(dice.el);
+    this.mangedListEl.appendChild(dice.el);
     this.onChange();
   }
 
@@ -76,9 +77,9 @@ export default class DiceManager extends Manager {
     this.facesEl.addEventListener("change", (evt) => {
       this.faceWeightsEl.innerHTML = "";
       for (let i = 0; i < evt.target.value; i += 1) {
-        const inputName = `weight-${i+1}`;
-        const weightLabelEl = makeLabel({ text: `${i + 1}:`, target: inputName, classes: ["dice-label"]})
-        const weightInputEl = makeNumberInput({name: inputName, min: "1", value: "1", step: "1", classes: ["dice-weight-input"]});
+        const inputId = `weight-${i + 1}`;
+        const weightLabelEl = makeLabel({ text: `${i + 1}:`, target: inputId, classes: ["dice-label"]})
+        const weightInputEl = makeNumberInput({id: inputId, min: "1", value: "1", step: "1", classes: ["dice-weight-input"]});
         const faceEl = makeFlexRow({children: [ weightLabelEl, weightInputEl ], classes: ["dice-weight"]});
         this.faceWeightsEl.appendChild(faceEl);
       }

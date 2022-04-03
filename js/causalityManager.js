@@ -5,7 +5,7 @@ export default class CausalityManager extends Manager {
   constructor(topLevelEl, creatorEl, simpleRuleManager, effectManger) {
     super();
     this.topLevelEl = topLevelEl;
-    this.menuEl = topLevelEl.querySelector(".menu-list");
+    this.mangedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.causeSelectionEl = creatorEl.querySelector("#new-causality-cause");
@@ -41,7 +41,7 @@ export default class CausalityManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, causality);
 
     this.managed[causality.key] = causality;
-    this.menuEl.appendChild(causality.el);
+    this.mangedListEl.appendChild(causality.el);
   }
 
   prepareAdderButton() {
