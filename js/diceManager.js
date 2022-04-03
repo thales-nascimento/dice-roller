@@ -7,7 +7,7 @@ export default class DiceManager extends Manager {
     this.diceIndex = 0;
 
     this.topLevelEl = topLevelEl;
-    this.mangedListEl = topLevelEl.querySelector(".list");
+    this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.facesEl = creatorEl.querySelector("#new-dice-faces");
@@ -58,7 +58,7 @@ export default class DiceManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, dice);
 
     this.managed[dice.key] = dice;
-    this.mangedListEl.appendChild(dice.el);
+    this.managedListEl.appendChild(dice.el);
     this.onChange();
   }
 

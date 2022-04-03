@@ -2,10 +2,10 @@ import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUti
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 export default class CausalityManager extends Manager {
-  constructor(topLevelEl, creatorEl, simpleCauseManager, effectManger) {
+  constructor(topLevelEl, creatorEl, simpleCauseManager, complexCauseManager, effectManger) {
     super("→ ");
     this.topLevelEl = topLevelEl;
-    this.mangedListEl = topLevelEl.querySelector(".list");
+    this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.causeSelectionEl = creatorEl.querySelector("#new-causality-cause");
@@ -13,6 +13,9 @@ export default class CausalityManager extends Manager {
 
     this.simpleCauseManager = simpleCauseManager;
     simpleCauseManager.addChangeListener(() => this.refreshCauses());
+
+    this.complexCauseManager = complexCauseManager;
+    complexCauseManager.addChangeListener(() => this.refreshCauses());
 
     this.effectManager = effectManger;
     effectManger.addChangeListener(() => this.refreshEffects());
@@ -47,7 +50,7 @@ export default class CausalityManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, causality);
 
     this.managed[causality.key] = causality;
-    this.mangedListEl.appendChild(causality.el);
+    this.managedListEl.appendChild(causality.el);
   }
 
   prepareAdderButton() {
@@ -76,6 +79,7 @@ export default class CausalityManager extends Manager {
   }
 
   refreshCauses() {
+    //TODO use complex causes
     const causes = this.simpleCauseManager.getAllManaged();
     const optionEls = causes.map(r => makeOption({text: r.key, value: r.key}));
 

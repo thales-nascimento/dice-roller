@@ -3,9 +3,9 @@ import Manager, { validateInputValue , removeInputError } from "./manager.js";
 
 export default class EffectManager extends Manager {
   constructor(topLevelEl, creatorEl) {
-    super("★");
+    super("∴");
     this.topLevelEl = topLevelEl;
-    this.mangedListEl = topLevelEl.querySelector(".list");
+    this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
 
@@ -15,7 +15,7 @@ export default class EffectManager extends Manager {
 
   generatePresets() {
     this.generateRow(this.keyPrefix + "Success");
-    this.generateRow(this.keyPrefix + "Failure");
+    this.generateRow(this.keyPrefix + "Reroll");
   }
 
   generateRow(name) {
@@ -31,7 +31,7 @@ export default class EffectManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, effect);
 
     this.managed[effect.key] = effect;
-    this.mangedListEl.appendChild(effect.el );
+    this.managedListEl.appendChild(effect.el );
     this.onChange();
   }
 

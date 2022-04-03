@@ -1,6 +1,7 @@
 import Dice from './diceManager.js'
-import SimpleCauseManager from './simpleCauseManager.js';
 import VariableManager from './variableManager.js';
+import SimpleCauseManager from './simpleCauseManager.js';
+import ComplexCauseManager from './complexCauseManager.js';
 import EffectManager from './effectManager.js';
 import CausalityManager from './causalityManager.js';
 import Table from './table.js';
@@ -17,9 +18,13 @@ function start() {
   const variableCreatorEl = document.querySelector("#new-variable");
   const variableManager = new VariableManager(variableEl, variableCreatorEl);
 
-  const simplecauseEl = document.querySelector("#simple-causes-top-level");
+  const simpleCauseEl = document.querySelector("#simple-causes-top-level");
   const simpleCauseCreatorEl = document.querySelector("#new-simple-cause");
-  const simpleCauseManager = new SimpleCauseManager(simplecauseEl, simpleCauseCreatorEl, diceManager, variableManager);
+  const simpleCauseManager = new SimpleCauseManager(simpleCauseEl, simpleCauseCreatorEl, diceManager, variableManager);
+
+  const complexCauseEl = document.querySelector("#complex-causes-top-level");
+  const complexCauseCreatorEl = document.querySelector("#new-complex-cause");
+  const complexCauseManager = new ComplexCauseManager(complexCauseEl, complexCauseCreatorEl, simpleCauseManager);
 
   const effectEl = document.querySelector("#effects-top-level");
   const effectCreatorEl = document.querySelector("#new-effect");
@@ -27,7 +32,7 @@ function start() {
 
   const conditionEl = document.querySelector("#conditions-top-level");
   const conditionsCreatorEl = document.querySelector("#new-causality");
-  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleCauseManager, effectManager);
+  const causalityManager = new CausalityManager(conditionEl, conditionsCreatorEl, simpleCauseManager, complexCauseManager, effectManager);
 
   const tableEl = document.querySelector("#table-top-level")
   const table = new Table(tableEl, diceManager, causalityManager);

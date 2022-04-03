@@ -12,27 +12,27 @@
     <div class="flex-col">
       <div class="flex-row">
         <fieldset id="dices-top-level" class="flex-col">
-          <legend>Available dices</legend>
+          <legend>Dices</legend>
           <div class="list flex-col"></div>
         </fieldset>
         <fieldset id="variables-top-level" class="flex-col">
-          <legend>Available variables</legend>
+          <legend>Variables</legend>
           <div class="list flex-col"></div>
         </fieldset>
         <fieldset id="simple-causes-top-level" class="flex-col">
-          <legend>Available simple causes</legend>
+          <legend>Simple causes</legend>
           <div class="list flex-col"></div>
         </fieldset>
         <fieldset id="complex-causes-top-level" class="flex-col">
-          <legend>Available complex causes</legend>
+          <legend>Complex causes</legend>
           <div class="list flex-col"></div>
         </fieldset>
         <fieldset id="effects-top-level" class="flex-col">
-          <legend>Available effects</legend>
+          <legend>Effects</legend>
           <div class="list flex-col"></div>
         </fieldset>
         <fieldset id="conditions-top-level" class="flex-col">
-          <legend>Available causalities</legend>
+          <legend>Causalities</legend>
           <div class="list flex-col"></div>
         </fieldset>
       </div>
@@ -74,6 +74,14 @@
         <select id="new-simple-cause-operand-b-selector"></select>
         <input id="new-simple-cause-constant" type="number" min="1" value="1" step="1"></input>
         <button id="new-simple-cause-create">Create</button>
+      </fieldset>
+
+      <fieldset id="new-complex-cause" class="flex-row">
+        <legend>Create new complex cause</legend>
+        <select id="new-complex-cause-operand-a-selector"></select>
+        <select id="new-complex-cause-operator-selector"></select>
+        <select id="new-complex-cause-operand-b-selector"></select>
+        <button id="new-complex-cause-create">Create</button>
       </fieldset>
 
       <fieldset id="new-effect" class="flex-row">

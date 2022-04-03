@@ -1,14 +1,14 @@
 import { makeFlexRow, makeButton, makeLabel, makeOption, warmup } from "./domUtils.js";
-import { operators, Condition } from "./condition.js"
+import { numberOperators, Condition } from "./condition.js"
 import Manager, { removeInputError, validateInputValue } from "./manager.js";
 
 const constantText = "const";
 
 export default class SimpleCauseManager extends Manager {
   constructor(topLevelEl, creatorEl, diceManager, variableManager) {
-    super("%");
+    super("∵");
     this.topLevelEl = topLevelEl;
-    this.mangedListEl = topLevelEl.querySelector(".list");
+    this.managedListEl = topLevelEl.querySelector(".list");
 
     this.creatorEl = creatorEl;
     this.operandBSelectionEl = creatorEl.querySelector("#new-simple-cause-operand-b-selector");
@@ -51,7 +51,7 @@ export default class SimpleCauseManager extends Manager {
     this.prepareRemoveConfirmationOnButton(removeButtonEl, cause);
 
     this.managed[cause.key] = cause;
-    this.mangedListEl.appendChild(cause.el);
+    this.managedListEl.appendChild(cause.el);
     this.onChange();
   }
 
@@ -61,8 +61,18 @@ export default class SimpleCauseManager extends Manager {
 
     fillOperators(operatorSelectionEl);
 
-    this.operandASelectionEl.addEventListener("change", removeInputError);
-    this.constantInputEl.addEventListener("change", removeInputError);
+    const removeAllinputErros = () => {
+      operatorSelectionEl.classList.remove("input-error");
+      this.operandASelectionEl.classList.remove("input-error");
+      this.constantInputEl.classList.remove("input-error");
+    }
+
+    operatorSelectionEl.addEventListener("change", removeAllinputErros);
+    this.operandASelectionEl.addEventListener("change", removeAllinputErros);
+    this.constantInputEl.addEventListener("change", removeAllinputErros);
+    this.operandBSelectionEl.addEventListener("change", (evt) => {
+      this.constantInputEl.disabled = evt.target.value !== constantText;
+    });
 
     this.refreshVariables();
 
@@ -77,14 +87,25 @@ export default class SimpleCauseManager extends Manager {
       if (!aIsDice) {
         operandA = this.variableManager.getManagedByKey(operandAKey);
       }
-      const operator = operators[operatorSelectionEl.value];
+      const operator = numberOperators[operatorSelectionEl.value];
       let operandB;
       const bIsConstant = this.operandBSelectionEl.value === constantText;
       if (bIsConstant) {
         const constant = this.constantInputEl.value;
-        if (aIsDice && constant > operandA.faces) {
-          this.constantInputEl.classList.add("input-error");
-          return;
+        if (aIsDice) {
+          if (constant > operandA.faces || constant < 1) {
+            this.constantInputEl.classList.add("input-error");
+            return;
+          } else if (constant == operandA.faces && operator == numberOperators[">"]) {
+            operatorSelectionEl.classList.add("input-error");
+            this.constantInputEl.classList.add("input-error");
+            return;
+          } else if (constant == 1 && operator == numberOperators["<"]) {
+            operatorSelectionEl.classList.add("input-error");
+            this.constantInputEl.classList.add("input-error");
+            return;
+          }
+
         }
         operandB = constant;
       } else {
@@ -104,30 +125,27 @@ export default class SimpleCauseManager extends Manager {
     this.refreshOperandB(optionEls.map(v => v.cloneNode(true)));
   }
 
-  refreshOperandB(variableOptionEls) {
+  refreshOperandB(optionEls) {
     this.operandBSelectionEl.innerHTML = "";
     const constantOptionEl = makeOption({text: constantText, value: constantText});
     this.operandBSelectionEl.appendChild(constantOptionEl);
-    for (const variableEl of variableOptionEls) {
-      this.operandBSelectionEl.appendChild(variableEl);
+    for (const optionEl of optionEls) {
+      this.operandBSelectionEl.appendChild(optionEl);
     }
-    this.operandBSelectionEl.addEventListener("change", (evt) => {
-      this.constantInputEl.disabled = evt.target.value !== constantText;
-    });
     warmup("change", this.operandBSelectionEl);
   }
 
-  refreshOperandA(variableOptionEls) {
+  refreshOperandA(optionEls) {
     this.operandASelectionEl.innerHTML = "";
-    for (const variableEl of variableOptionEls) {
-      this.operandASelectionEl.appendChild(variableEl);
+    for (const optionEl of optionEls) {
+      this.operandASelectionEl.appendChild(optionEl);
     }
     warmup("change", this.operandASelectionEl);
   }
 }
 
 function fillOperators(operatorSelectionEl) {
-  const operatorOptionEls = Object.values(operators).map(op => makeOption({text: op.text, value: op.text}));
+  const operatorOptionEls = Object.values(numberOperators).map(op => makeOption({text: op.text, value: op.text}));
   for (const opEl of operatorOptionEls) {
     operatorSelectionEl.appendChild(opEl);
   }

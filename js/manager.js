@@ -41,8 +41,8 @@ export default class Manager {
       for (const dep of managedInstance.depends) {
         dep.requiredBy.delete(managedInstance);
       }
-      console.assert(this.mangedListEl !== undefined, "all Manager subclasses must provide mangedListEl.");
-      this.mangedListEl.removeChild(managedInstance.el);
+      console.assert(this.managedListEl !== undefined, "all Manager subclasses must provide managedListEl.");
+      this.managedListEl.removeChild(managedInstance.el);
       delete this.managed[managedInstance.key];
       this.onChange();
     }

@@ -29,7 +29,7 @@ body > fieldset:first-child {
   width: 20em;
 }
 
-.causality-key, .operator, .dice-key, .effect-key, .variable-key, .simple-cause-key, .menu-label, .menu-remove-button {
+.causality-key, .operator, .dice-key, .effect-key, .variable-key, .simple-cause-key, .complex-cause-key, .menu-label, .menu-remove-button {
   display: block;
   height: 24px;
   line-height: 24px;
@@ -64,6 +64,11 @@ body > fieldset:first-child {
 .simple-cause-key {
   padding: 0 3px;
   background-color: darkorange;
+  width: 2em;
+}
+.complex-cause-key {
+  padding: 0 3px;
+  background-color: dodgerblue;
   width: 2em;
 }
 .causality-key {

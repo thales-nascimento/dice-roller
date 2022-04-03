@@ -5,13 +5,18 @@ class Operator {
   }
 }
 
-export const operators = {
+export const numberOperators = {
   ">": new Operator(">", (a, b) => a > b),
   "≥": new Operator("≥", (a, b) => a >= b),
   "=": new Operator("=", (a, b) => a == b),
   "≠": new Operator("≠", (a, b) => a != b),
   "≤": new Operator("≤", (a, b) => a <= b),
   "<": new Operator("<", (a, b) => a < b),
+};
+
+export const propositionOperators = {
+  "AND": new Operator("AND", (a, b) => a && b),
+  "OR": new Operator("OR", (a, b) => a || b),
 };
 
 export class Condition {
